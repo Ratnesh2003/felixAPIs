@@ -34,6 +34,8 @@ public class User {
 
     private String role = "USER";
 
+    private boolean isEnabled;
+
     public User() {
     }
 
@@ -90,5 +92,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }
