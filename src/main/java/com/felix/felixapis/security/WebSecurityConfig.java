@@ -1,5 +1,6 @@
 package com.felix.felixapis.security;
 
+import com.felix.felixapis.security.jwt.AuthTokenFilter;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +23,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    private AuthTokenFilter authTokenFilter;
 //    @Autowired
 //    private AuthEntryPointJwt unauthorizedHandler;
 //
@@ -50,11 +54,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll().antMatchers("/api/auth/signup").permitAll()
                 .antMatchers("/api/auth/login").permitAll()
-                .antMatchers("/api/userhome").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/adminhome").hasRole("ADMIN")
+//                .antMatchers("/api/userhome").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/api/adminhome").hasRole("ADMIN")
+//                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         http.csrf().disable();

@@ -69,7 +69,7 @@ public class AuthController {
 
         UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
 
-//        String jwtCookie = jwtUtil.generateToken(userDetails);
+        String jwtCookie = jwtUtil.generateToken(userDetails);
 
 
 //        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -79,22 +79,12 @@ public class AuthController {
 //        System.out.println(userDetails);
 
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE)
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie)
                 .body(new UserInfoResponse(userDetails.getId(),
                         userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole()));
     }
 
-    @RequestMapping("/userhome")
-    @ResponseBody
-    public String userHome() {
-        return "User home page";
-    }
 
-    @RequestMapping("/adminHome")
-    @ResponseBody
-    public String adminHome() {
-        return "Admin home page";
-    }
 
 
 }

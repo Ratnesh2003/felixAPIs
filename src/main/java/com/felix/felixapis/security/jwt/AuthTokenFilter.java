@@ -1,7 +1,12 @@
 package com.felix.felixapis.security.jwt;
 
+import com.felix.felixapis.security.services.UserDetailsImpl;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -10,17 +15,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//public class AuthTokenFilter extends OncePerRequestFilter {
-//    @Autowired
-//    JwtUtils jwtUtils;
-//
-//    @Autowired
-//    private UserDetailsServiceImpl userDetailsService;
-//
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        try {
-//            String jwt = parseJwt(request);
-//        }
-//    }
-//}
+@Component
+public class AuthTokenFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestTokenHeader = request.getHeader("Authorization");
+        String email = null;
+        String jwtToken = null;
+        if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7);
+            try {
+                email = this.jwtUtil.getEmailFromToken(jwtToken);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            UserDetailsImpl userDetails =  this.userDetailsService.loadUserByUsername(email);
+
+            if(email != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+
+
+
+
+    }
+}
