@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -19,6 +20,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+
+//    @Autowired
+//    private AuthEntryPointJwt unauthorizedHandler;
+//
+//    @Bean
+//    public AuthTokenFilter authenticationJwtTokenFilter() {
+//        return new AuthTokenFilter();
+//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,7 +48,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("h2-console/**").permitAll().antMatchers("/api/auth/signup").permitAll();
+                .antMatchers("/h2-console/**").permitAll().antMatchers("/api/auth/signup").permitAll()
+                .antMatchers("/api/auth/login").permitAll()
+                .antMatchers("/api/userhome").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/adminhome").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
 
         http.csrf().disable();
         http.headers().frameOptions().disable();
