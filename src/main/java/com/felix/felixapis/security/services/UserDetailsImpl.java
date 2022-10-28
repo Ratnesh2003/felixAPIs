@@ -20,13 +20,16 @@ public class UserDetailsImpl implements UserDetails{
 
     private String role;
 
-    public UserDetailsImpl(Long id, String firstName, String lastName, String email, String password, String role) {
+    private Boolean isEnabled;
+
+    public UserDetailsImpl(Long id, String firstName, String lastName, String email, String password, String role, Boolean isEnabled) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.isEnabled = isEnabled;
     }
 
 
@@ -57,7 +60,7 @@ public class UserDetailsImpl implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -67,7 +70,8 @@ public class UserDetailsImpl implements UserDetails{
                 user.getLastName(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getRole()
+                user.getRole(),
+                user.isEnabled()
         );
     }
 

@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 @RestController
 @RequestMapping("/")
@@ -52,11 +55,30 @@ public class AuthController {
     @Autowired
     JwtUtil jwtUtil;
 
+//    @Autowired
+//    EmailServices emailServices;
+
     @PostMapping("/api/auth/signup")
-    public String registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+    public String registerUser(@Valid @RequestBody SignupRequest signupRequest) throws MessagingException {
+
+
+
+
+
+
+
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
-            return "Email already in use";
+            UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
+            System.out.println(userDetails.isEnabled());
+            if(!userDetails.isEnabled()) {
+                return "Please verify your email first.";
+            } else {
+                return "Email already in use";
+            }
+
         }
+
+
         User user = new User(
                 signupRequest.getEmail(),
                 signupRequest.getFirstName(),
@@ -68,13 +90,12 @@ public class AuthController {
         EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(user);
         confirmationTokenRepository.save(emailConfirmationModel);
 
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom("innitt090@gmail.com");
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Email Verification Felix");
-        mailMessage.setText("To verify your account, please click the following link: \n" +
-                "http://localhost:8080/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken());
-        emailServices.sendEmail(mailMessage);
+        emailServices.sendMessageWithAttachment("innitt090@gmail.com",
+                user.getEmail(),
+                "Email Verification Felix",
+                "To verify your account, please click the following link: \n" +
+                "<a href=\"http://localhost:8080/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+                "\"> Activate now</a>");
 
 
         return "Please check your email for verification";
@@ -98,14 +119,18 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws Exception {
 
-        try {
-            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        } catch (UsernameNotFoundException ex) {
-            ex.printStackTrace();
-            throw new Exception("Invalid Email or Password");
-        }
 
         UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
+            try {
+                this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                
+            } catch (UsernameNotFoundException ex) {
+//                ex.printStackTrace();
+                throw new Exception("Invalid Email or Password");
+            }
+
+
+
 
         String jwtCookie = jwtUtil.generateToken(userDetails);
 

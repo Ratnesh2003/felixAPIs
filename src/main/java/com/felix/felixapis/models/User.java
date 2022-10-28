@@ -34,7 +34,7 @@ public class User {
 
     private String role = "USER";
 
-    private boolean isEnabled;
+    private boolean isEnabled = false;
 
     public User() {
     }
