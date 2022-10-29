@@ -94,7 +94,7 @@ public class AuthController {
                 user.getEmail(),
                 "Email Verification Felix",
                 "To verify your account, please click the following link: \n" +
-                "<a href=\"http://localhost:8080/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+                "<a href=\"https://felixapis.herokuapp.com/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
                 "\"> Activate now</a>");
 
 
