@@ -413,3 +413,6 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/Ratnesh
 	at org.h2.mvstore.FileStore.open(FileStore.java:128)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:452)
 	... 135 more
+2022-10-28 14:11:53 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * from [*]'felix_users"""; SQL statement:
+select * from 'felix_users" [42000-214]
