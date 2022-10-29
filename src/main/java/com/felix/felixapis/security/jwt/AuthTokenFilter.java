@@ -30,25 +30,26 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String email = null;
         String jwtToken = null;
         if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+                jwtToken = requestTokenHeader.substring(7);
             try {
                 email = this.jwtUtil.getEmailFromToken(jwtToken);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-            UserDetailsImpl userDetails =  this.userDetailsService.loadUserByUsername(email);
-
-            if(email != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
         }
+            if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                UserDetailsImpl userDetails =  this.userDetailsService.loadUserByUsername(email);
+
+                if(jwtUtil.validateToken(jwtToken, userDetails)) {
+
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+                }
+            }
+
         filterChain.doFilter(request, response);
-
-
-
-
     }
 }

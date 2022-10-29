@@ -20,18 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private AuthTokenFilter authTokenFilter;
-//    @Autowired
-//    private AuthEntryPointJwt unauthorizedHandler;
-//
-//    @Bean
-//    public AuthTokenFilter authenticationJwtTokenFilter() {
-//        return new AuthTokenFilter();
-//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
