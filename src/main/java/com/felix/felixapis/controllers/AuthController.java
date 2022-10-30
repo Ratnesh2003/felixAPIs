@@ -56,23 +56,15 @@ public class AuthController {
     @PostMapping("/api/auth/signup")
     public String registerUser(@Valid @RequestBody SignupRequest signupRequest) throws MessagingException {
 
-
-
-
-
-
-
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
             UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
-            System.out.println(userDetails.isEnabled());
+//            System.out.println(userDetails.isEnabled());
             if(!userDetails.isEnabled()) {
                 return "Please verify your email first.";
             } else {
                 return "Email already in use";
             }
-
         }
-
 
         User user = new User(
                 signupRequest.getEmail(),
@@ -111,7 +103,7 @@ public class AuthController {
     }
 
     @PostMapping("/api/auth/login")
-    @ResponseBody
+//    @ResponseBody
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws Exception {
 
 
@@ -125,28 +117,20 @@ public class AuthController {
             }
         String jwtCookie = jwtUtil.generateToken(userDetails);
 
-
-//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//        System.out.println(userDetails);
-
-
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie)
                 .body(new UserInfoResponse(userDetails.getId(),
                         userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole()));
     }
 
-    private void authenticate(LoginRequest loginRequest) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        } catch (DisabledException e) {
-            throw new Exception("Verify your email before logging in");
-        } catch (BadCredentialsException e) {
-            throw new Exception(("Invalid email or password"));
-        }
-    }
+//    private void authenticate(LoginRequest loginRequest) throws Exception {
+//        try {
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//        } catch (DisabledException e) {
+//            throw new Exception("Verify your email before logging in");
+//        } catch (BadCredentialsException e) {
+//            throw new Exception(("Invalid email or password"));
+//        }
+//    }
 
 
 
