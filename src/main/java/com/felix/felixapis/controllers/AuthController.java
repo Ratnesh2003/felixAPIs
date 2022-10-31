@@ -1,12 +1,15 @@
 package com.felix.felixapis.controllers;
 
-import com.felix.felixapis.models.EmailConfirmationModel;
-import com.felix.felixapis.models.User;
+import com.felix.felixapis.models.auth.EmailConfirmationModel;
+import com.felix.felixapis.models.auth.OTPModel;
+import com.felix.felixapis.models.auth.User;
+import com.felix.felixapis.payload.request.ConfirmOTPRequest;
 import com.felix.felixapis.payload.request.LoginRequest;
 import com.felix.felixapis.payload.request.SignupRequest;
 import com.felix.felixapis.payload.response.UserInfoResponse;
-import com.felix.felixapis.repository.ConfirmationTokenRepository;
-import com.felix.felixapis.repository.UserRepository;
+import com.felix.felixapis.repository.auth.ConfirmationTokenRepository;
+import com.felix.felixapis.repository.auth.OTPRepository;
+import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import com.felix.felixapis.security.services.EmailServices;
 import com.felix.felixapis.security.services.UserDetailsImpl;
@@ -15,9 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.Random;
+
 @RestController
 @RequestMapping("/")
 public class AuthController {
@@ -50,8 +55,10 @@ public class AuthController {
     @Autowired
     JwtUtil jwtUtil;
 
-//    @Autowired
-//    EmailServices emailServices;
+    @Autowired
+    OTPRepository otpRepository;
+
+    Random random = new Random();
 
     @PostMapping("/api/auth/signup")
     public String registerUser(@Valid @RequestBody SignupRequest signupRequest) throws MessagingException {
@@ -122,15 +129,98 @@ public class AuthController {
                         userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole()));
     }
 
-//    private void authenticate(LoginRequest loginRequest) throws Exception {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-//        } catch (DisabledException e) {
-//            throw new Exception("Verify your email before logging in");
-//        } catch (BadCredentialsException e) {
-//            throw new Exception(("Invalid email or password"));
-//        }
-//    }
+    @PutMapping("/api/auth/forgotpassword")
+    public String forgotPass(@RequestBody LoginRequest loginRequest) throws MessagingException {
+        if(userRepository.existsByEmailIgnoreCase(loginRequest.getEmail())) {
+            User user = userRepository.findUserByEmailIgnoreCase(loginRequest.getEmail());
+            OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
+            int otp = random.nextInt(899999) + 100000;
+            if(otpModel == null) {
+                OTPModel otpModelNew = new OTPModel(user.getId(), otp);
+                otpRepository.save(otpModelNew);
+
+            } else {
+                otpModel.setOtpId(otpModel.getOtpId());
+                otpModel.setCreationDate(new Date());
+                otpModel.setOtp(otp);
+                otpRepository.save(otpModel);
+            }
+            emailServices.sendMessageWithAttachment(
+                    "innitt090@gmail.com",
+                    loginRequest.getEmail(), "RESET PASSWORD FELIX",
+                    Integer.toString(otp)
+            );
+            return "OTP sent on the given mail";
+        } else {
+            return "User not found with the given email";
+        }
+    }
+    @PostMapping("/api/auth/confirmotp")
+    public String confirmOtp(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
+        if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
+            User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
+            OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
+//            return "OTP Verified";
+
+            if(new Date().getTime() > otpModel.getCreationDate().getTime() + 5*60*1000) {
+                return "OTP Expired";
+            } else {
+                int originalOTP = otpModel.getOtp();
+                int providedOTP = confirmOTPRequest.getOtp();
+                if(originalOTP == providedOTP) {
+                    return "OTP Verified";
+                } else {
+                    return "Incorrect OTP";
+                }
+            }
+        } else {
+            return "User doesn't exist";
+        }
+    }
+
+    @PutMapping("/api/auth/changepassword")
+    public String changePass(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
+        if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
+            User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
+            OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
+            if(new Date().getTime() > otpModel.getCreationDate().getTime() + 5*60*1000) {
+                return "OTP Expired";
+            } else {
+                int originalOTP = otpModel.getOtp();
+                int providedOTP = confirmOTPRequest.getOtp();
+                if(originalOTP == providedOTP) {
+                    user.setPassword(passwordEncoder.encode(confirmOTPRequest.getPassword()));
+                    userRepository.save(user);
+                    return "Password changed successfully";
+                } else {
+                    return "Incorrect OTP";
+                }
+            }
+        } else {
+            return "User not found";
+        }
+    }
+
+    @PutMapping("/api/auth/resendotp")
+    public String resendOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) throws MessagingException {
+        if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
+            User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
+            OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
+            int otp = random.nextInt(899999) + 100000;
+            otpModel.setOtpId(otpModel.getOtpId());
+            otpModel.setOtp(otp);
+            otpModel.setCreationDate(new Date());
+            otpRepository.save(otpModel);
+            emailServices.sendMessageWithAttachment(
+                    "innitt090@gmail.com",
+                    confirmOTPRequest.getEmail(), "RESET PASSWORD FELIX",
+                    Integer.toString(otp)
+            );
+            return "OTP sent on the given mail";
+        } else {
+            return "User doesn't exist";
+        }
+    }
 
 
 
