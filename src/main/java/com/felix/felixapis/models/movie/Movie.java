@@ -21,7 +21,13 @@ public class Movie {
 
     private String movieCast;
 
-    private String movieWriters;
+//    private String movieWriters;
+
+    private int movieYear;
+
+    private String movieRestriction;
+
+    private String movieLength;
 
     @OneToMany(targetEntity = Genre.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
@@ -34,11 +40,14 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(String movieName, String movieDescription, String movieCast, String movieWriters, List<Genre> genres, List<Category> categories) {
+    public Movie(String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, List<Category> categories) {
         this.movieName = movieName;
         this.movieDescription = movieDescription;
         this.movieCast = movieCast;
-        this.movieWriters = movieWriters;
+//        this.movieWriters = movieWriters;
+        this.movieYear = movieYear;
+        this.movieRestriction = movieRestriction;
+        this.movieLength = movieLength;
         this.genres = genres;
         this.categories = categories;
     }
@@ -75,12 +84,37 @@ public class Movie {
         this.movieCast = movieCast;
     }
 
-    public String getMovieWriters() {
-        return movieWriters;
+//    public String getMovieWriters() {
+//        return movieWriters;
+//    }
+
+//    public void setMovieWriters(String movieWriters) {
+//        this.movieWriters = movieWriters;
+//    }
+
+
+    public int getMovieYear() {
+        return movieYear;
     }
 
-    public void setMovieWriters(String movieWriters) {
-        this.movieWriters = movieWriters;
+    public void setMovieYear(int movieYear) {
+        this.movieYear = movieYear;
+    }
+
+    public String getMovieRestriction() {
+        return movieRestriction;
+    }
+
+    public void setMovieRestriction(String movieRestriction) {
+        this.movieRestriction = movieRestriction;
+    }
+
+    public String getMovieLength() {
+        return movieLength;
+    }
+
+    public void setMovieLength(String movieLength) {
+        this.movieLength = movieLength;
     }
 
     public List<Genre> getGenres() {
