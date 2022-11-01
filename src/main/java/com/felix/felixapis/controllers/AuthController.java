@@ -20,10 +20,15 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.WebUtils;
 
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 @RestController
 @RequestMapping("/")
@@ -50,11 +55,15 @@ public class AuthController {
     @Autowired
     JwtUtil jwtUtil;
 
+
+
 //    @Autowired
 //    EmailServices emailServices;
 
     @PostMapping("/api/auth/signup")
-    public String registerUser(@Valid @RequestBody SignupRequest signupRequest) throws MessagingException {
+    public String registerUser(@Valid @RequestBody SignupRequest signupRequest, HttpServletRequest httpRequest) throws MessagingException {
+
+        String baseURL =  ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
 
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
             UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
@@ -81,7 +90,7 @@ public class AuthController {
                 user.getEmail(),
                 "Email Verification Felix",
                 "To verify your account, please click the following link: \n" +
-                "<a href=\"https://felixapis.herokuapp.com/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+                "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
                 "\"> Activate now</a>");
 
 
@@ -105,7 +114,6 @@ public class AuthController {
     @PostMapping("/api/auth/login")
 //    @ResponseBody
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws Exception {
-
 
         UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
             try {
