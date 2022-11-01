@@ -19,13 +19,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.Random;
@@ -61,11 +62,12 @@ public class AuthController {
     Random random = new Random();
 
     @PostMapping("/api/auth/signup")
-    public String registerUser(@Valid @RequestBody SignupRequest signupRequest) throws MessagingException {
+    public String registerUser(@Valid @RequestBody SignupRequest signupRequest, HttpServletRequest httpRequest) throws MessagingException {
+
+    String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
 
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
             UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
-//            System.out.println(userDetails.isEnabled());
             if(!userDetails.isEnabled()) {
                 return "Please verify your email first.";
             } else {
@@ -81,31 +83,58 @@ public class AuthController {
         );
         userRepository.save(user);
 
-        EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(user);
+        EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(user.getId());
         confirmationTokenRepository.save(emailConfirmationModel);
 
         emailServices.sendMessageWithAttachment("innitt090@gmail.com",
                 user.getEmail(),
                 "Email Verification Felix",
                 "To verify your account, please click the following link: \n" +
-                "<a href=\"https://felixapis.herokuapp.com/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+                "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
                 "\"> Activate now</a>");
-
-
         return "Please check your email for verification";
+    }
+
+    @PutMapping("/api/auth/resend-verification-link")
+    public String resendVerificationLink(@RequestBody LoginRequest loginRequest, HttpServletRequest httpRequest) throws MessagingException {
+
+        String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
+
+        if(userRepository.existsByEmailIgnoreCase(loginRequest.getEmail())) {
+            User user = userRepository.findUserByEmailIgnoreCase(loginRequest.getEmail());
+            EmailConfirmationModel emailConfirmationModel = confirmationTokenRepository.findEmailConfirmationModelByUserId(user.getId());
+            EmailConfirmationModel newEmailConfirmModel = new EmailConfirmationModel(user.getId());
+            newEmailConfirmModel.setTokenId(emailConfirmationModel.getTokenId());
+            confirmationTokenRepository.save(newEmailConfirmModel);
+
+            emailServices.sendMessageWithAttachment("innitt090@gmail.com",
+                    user.getEmail(),
+                    "Email Verification Felix",
+                    "To verify your account, please click the following link: \n" +
+                            "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+                            "\"> Activate now</a>");
+
+            return "Verification link sent to the given Email";
+        } else {
+            return "Invalid user";
+        }
     }
 
     @RequestMapping(value = "/api/auth/confirm-account", method = {RequestMethod.GET, RequestMethod.POST})
     public String confirmUserAccount(@RequestParam("token")String confirmationToken) {
         EmailConfirmationModel token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
-
-        if(token != null) {
-            User user = userRepository.findUserByEmailIgnoreCase(token.getUser().getEmail());
-            user.setEnabled(true);
-            userRepository.save(user);
-            return "Account verified";
+        if(new Date().getTime() > token.getCreationDate().getTime() + 5*60*1000) {
+            return "Verification link expired";
         } else {
-            return "The link is invalid";
+            if(token != null) {
+//                User user = userRepository.findUserByEmailIgnoreCase(token.getUser().getEmail());
+                User user = userRepository.findUserById(token.getUserId());
+                user.setEnabled(true);
+                userRepository.save(user);
+                return "Account verified";
+            } else {
+                return "The link is invalid";
+            }
         }
     }
 
@@ -128,7 +157,7 @@ public class AuthController {
                         userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole()));
     }
 
-    @PutMapping("/api/auth/forgotpassword")
+    @PutMapping("/api/auth/forgot-password")
     public String forgotPass(@RequestBody LoginRequest loginRequest) throws MessagingException {
         if(userRepository.existsByEmailIgnoreCase(loginRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(loginRequest.getEmail());
@@ -147,19 +176,18 @@ public class AuthController {
             emailServices.sendMessageWithAttachment(
                     "innitt090@gmail.com",
                     loginRequest.getEmail(), "RESET PASSWORD FELIX",
-                    Integer.toString(otp)
+                    "OTP to reset password:  <b>"  + Integer.toString(otp) + "</b>"
             );
             return "OTP sent on the given mail";
         } else {
             return "User not found with the given email";
         }
     }
-    @PostMapping("/api/auth/confirmotp")
+    @PostMapping("/api/auth/confirm-otp")
     public String confirmOtp(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
         if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
             OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
-//            return "OTP Verified";
 
             if(new Date().getTime() > otpModel.getCreationDate().getTime() + 5*60*1000) {
                 return "OTP Expired";
@@ -177,7 +205,7 @@ public class AuthController {
         }
     }
 
-    @PutMapping("/api/auth/changepassword")
+    @PutMapping("/api/auth/change-password")
     public String changePass(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
         if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
@@ -200,7 +228,7 @@ public class AuthController {
         }
     }
 
-    @PutMapping("/api/auth/resendotp")
+    @PutMapping("/api/auth/resend-otp")
     public String resendOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) throws MessagingException {
         if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
@@ -213,7 +241,7 @@ public class AuthController {
             emailServices.sendMessageWithAttachment(
                     "innitt090@gmail.com",
                     confirmOTPRequest.getEmail(), "RESET PASSWORD FELIX",
-                    Integer.toString(otp)
+                    "OTP to reset password:  <b>"  + Integer.toString(otp) + "</b>"
             );
             return "OTP sent on the given mail";
         } else {

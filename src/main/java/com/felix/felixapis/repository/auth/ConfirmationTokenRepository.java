@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfirmationTokenRepository extends CrudRepository<EmailConfirmationModel, String> {
     EmailConfirmationModel findByConfirmationToken(String confirmationToken);
+    EmailConfirmationModel findEmailConfirmationModelByUserId(long userId);
 }
