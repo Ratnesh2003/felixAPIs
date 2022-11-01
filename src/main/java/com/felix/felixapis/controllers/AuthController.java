@@ -119,7 +119,6 @@ public class AuthController {
                 this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
             } catch (UsernameNotFoundException ex) {
-//                ex.printStackTrace();
                 throw new Exception("Invalid Email or Password");
             }
         String jwtCookie = jwtUtil.generateToken(userDetails);
