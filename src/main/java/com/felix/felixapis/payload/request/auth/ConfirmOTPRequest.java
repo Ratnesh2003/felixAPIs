@@ -1,4 +1,4 @@
-package com.felix.felixapis.payload.request;
+package com.felix.felixapis.payload.request.auth;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
