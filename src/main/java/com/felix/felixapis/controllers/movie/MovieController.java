@@ -2,30 +2,26 @@ package com.felix.felixapis.controllers.movie;
 
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.payload.request.movie.MoviesRequest;
-import com.felix.felixapis.repository.movie.CategoryRepository;
-import com.felix.felixapis.repository.movie.GenreRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-//@RequestMapping("/")
 public class MovieController {
-    @Autowired
-    private MoviesRepository moviesRepository;
+    private final MoviesRepository moviesRepository;
 
-    @Autowired
-    private GenreRepository genreRepository;
+    public MovieController(MoviesRepository moviesRepository) {
+        this.moviesRepository = moviesRepository;
+    }
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @PostMapping("/api/admin/addnewmovie")
-    public String addNewMovie(@RequestBody MoviesRequest moviesRequest) {
+    @PostMapping("/api/admin/add-new-movie")
+    public ResponseEntity<?> addNewMovie(@RequestBody MoviesRequest moviesRequest) {
         moviesRepository.save(moviesRequest.getMovie());
-        return "Movie added successfully";
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(moviesRequest.getMovie());
     }
 
     @GetMapping("/api/home/movies")
