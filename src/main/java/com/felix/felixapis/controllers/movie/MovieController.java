@@ -32,4 +32,9 @@ public class MovieController {
     public List<Movie> getMovies(@RequestParam String category) {
         return moviesRepository.findAllMoviesWhereCategory(category);
     }
+
+    @GetMapping("/api/home/search")
+    public List<Movie> searchMovies(@RequestParam String searchText) {
+
+    }
 }
