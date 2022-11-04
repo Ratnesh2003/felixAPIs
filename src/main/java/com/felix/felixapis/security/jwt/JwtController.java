@@ -1,6 +1,6 @@
 //package com.felix.felixapis.security.jwt;
 //
-//import com.felix.felixapis.models.User;
+//import com.felix.felixapis.models.auth.User;
 //import com.felix.felixapis.payload.request.LoginRequest;
 //import com.felix.felixapis.security.services.UserDetailsImpl;
 //import com.felix.felixapis.security.services.UserDetailsServiceImpl;

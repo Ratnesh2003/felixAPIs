@@ -1,6 +1,6 @@
 package com.felix.felixapis.security.services;
 
-import com.felix.felixapis.models.User;
+import com.felix.felixapis.models.auth.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

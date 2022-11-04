@@ -1,4 +1,4 @@
-package com.felix.felixapis.models;
+package com.felix.felixapis.models.auth;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -18,15 +18,15 @@ public class EmailConfirmationModel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
-    private User userId;
+//    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+//    @JoinColumn(nullable = false, name = "user_id")
+    private Long userId;
 
     public EmailConfirmationModel() {
     }
 
-    public EmailConfirmationModel(User user) {
-        this.userId = user;
+    public EmailConfirmationModel(long userId) {
+        this.userId = userId;
         creationDate = new Date();
         confirmationToken = UUID.randomUUID().toString();
     }
@@ -55,11 +55,11 @@ public class EmailConfirmationModel {
         this.creationDate = creationDate;
     }
 
-    public User getUser() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUser(User user) {
-        this.userId = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
