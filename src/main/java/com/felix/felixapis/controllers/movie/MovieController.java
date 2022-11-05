@@ -5,6 +5,7 @@ import com.felix.felixapis.payload.request.movie.MoviesRequest;
 import com.felix.felixapis.repository.movie.CategoryRepository;
 import com.felix.felixapis.repository.movie.GenreRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
+import com.felix.felixapis.services.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +18,13 @@ public class MovieController {
     private MoviesRepository moviesRepository;
 
     @Autowired
-    private GenreRepository genreRepository;
+    private SearchService searchService;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+//    @Autowired
+//    private GenreRepository genreRepository;
+//
+//    @Autowired
+//    private CategoryRepository categoryRepository;
 
     @PostMapping("/api/admin/addnewmovie")
     public String addNewMovie(@RequestBody MoviesRequest moviesRequest) {
@@ -35,6 +39,11 @@ public class MovieController {
 
     @GetMapping("/api/home/search")
     public List<Movie> searchMovies(@RequestParam String searchText) {
-
+        List<Movie> result = searchService.searchUsingMovieName(searchText);
+        if(!result.isEmpty()) {
+            return result;
+        } else {
+            return searchService.searchUsingGenreName(searchText.toUpperCase());
+        }
     }
 }
