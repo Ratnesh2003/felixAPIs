@@ -3,9 +3,9 @@ package com.felix.felixapis.controllers;
 import com.felix.felixapis.models.auth.EmailConfirmationModel;
 import com.felix.felixapis.models.auth.OTPModel;
 import com.felix.felixapis.models.auth.User;
-import com.felix.felixapis.payload.request.ConfirmOTPRequest;
-import com.felix.felixapis.payload.request.LoginRequest;
-import com.felix.felixapis.payload.request.SignupRequest;
+import com.felix.felixapis.payload.request.auth.ConfirmOTPRequest;
+import com.felix.felixapis.payload.request.auth.LoginRequest;
+import com.felix.felixapis.payload.request.auth.SignupRequest;
 import com.felix.felixapis.payload.response.UserInfoResponse;
 import com.felix.felixapis.repository.auth.ConfirmationTokenRepository;
 import com.felix.felixapis.repository.auth.OTPRepository;
@@ -14,7 +14,6 @@ import com.felix.felixapis.security.jwt.JwtUtil;
 import com.felix.felixapis.security.services.EmailServices;
 import com.felix.felixapis.security.services.UserDetailsImpl;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,8 +22,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -35,36 +32,46 @@ import java.util.Random;
 @RequestMapping("/")
 public class AuthController {
 
-    @Autowired
-    private ConfirmationTokenRepository confirmationTokenRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    @Autowired
-    private EmailServices emailServices;
+    private final EmailServices emailServices;
 
-    @Autowired
+    final
     AuthenticationManager authenticationManager;
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
+    final
     PasswordEncoder passwordEncoder;
 
-    @Autowired
+    final
     JwtUtil jwtUtil;
 
-    @Autowired
+    final
     OTPRepository otpRepository;
 
     Random random = new Random();
 
+    public AuthController(ConfirmationTokenRepository confirmationTokenRepository, EmailServices emailServices, AuthenticationManager authenticationManager, UserRepository userRepository, UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, OTPRepository otpRepository) {
+        this.confirmationTokenRepository = confirmationTokenRepository;
+        this.emailServices = emailServices;
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.otpRepository = otpRepository;
+    }
+
+
     @PostMapping("/api/auth/signup")
     public String registerUser(@Valid @RequestBody SignupRequest signupRequest, HttpServletRequest httpRequest) throws MessagingException {
 
-    String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
+        String baseURL =  ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
 
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
             UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
@@ -127,7 +134,6 @@ public class AuthController {
             return "Verification link expired";
         } else {
             if(token != null) {
-//                User user = userRepository.findUserByEmailIgnoreCase(token.getUser().getEmail());
                 User user = userRepository.findUserById(token.getUserId());
                 user.setEnabled(true);
                 userRepository.save(user);
@@ -141,7 +147,6 @@ public class AuthController {
     @PostMapping("/api/auth/login")
 //    @ResponseBody
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws Exception {
-
 
         UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
             try {
