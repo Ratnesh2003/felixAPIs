@@ -22,6 +22,8 @@ public class JwtUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
 
+    public JwtUtil() {
+    }
 
     private String secret = "FelixSpringSecurityIamWritingThisJustToExtendTheSizeOfTheSecurityKeyIThinkItShouldWorkNow";
 
@@ -70,4 +72,6 @@ public class JwtUtil implements Serializable {
         final String email = getEmailFromToken(token);
         return (email.equals(userDetails.getEmail()) && !isTokenExpired(token));
     }
+
+
 }
