@@ -1,9 +1,7 @@
 package com.felix.felixapis.models.auth;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name="felix_users", uniqueConstraints = {
@@ -44,6 +42,10 @@ public class User {
         this.lastName = lastName;
         this.password = password;
     }
+@OneToMany(targetEntity = WatchedHistory.class,cascade = CascadeType.ALL)
+@JoinColumn(name="movie_id",referencedColumnName = "id")
+    private List<WatchedHistory> watched;
+
 
     public Long getId() {
         return id;

@@ -1,12 +1,14 @@
-package com.felix.felixapis.payload.request.movie;
+package com.felix.felixapis.dto;
 
-public class WishlistRequest {
+
+
+public class WatchedHistoryRequest {
     private Long movieId;
 
-    public WishlistRequest() {
+    public WatchedHistoryRequest() {
     }
 
-    public WishlistRequest(Long movieId) {
+    public WatchedHistoryRequest(Long movieId) {
         this.movieId = movieId;
     }
 
@@ -17,4 +19,5 @@ public class WishlistRequest {
     public void setMovieId(Long movieId) {
         this.movieId = movieId;
     }
+
 }

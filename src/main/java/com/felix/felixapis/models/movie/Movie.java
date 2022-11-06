@@ -1,6 +1,8 @@
 package com.felix.felixapis.models.movie;
 
 
+//import com.felix.felixapis.models.WatchedMovie;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,7 +13,9 @@ import java.util.List;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name="movie_id")
     private Long id;
+
 
     @NotNull
     @Size(max = 40)
