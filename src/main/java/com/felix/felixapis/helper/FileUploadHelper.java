@@ -18,11 +18,6 @@ public class FileUploadHelper {
         boolean fileUploaded = false;
         String filePath = UPLOAD_DIR + File.separator + file.getOriginalFilename();
         try {
-            File filePathCheck = new File(filePath);
-            if(!filePathCheck.exists()) {
-                filePathCheck.mkdir();
-            }
-
             Files.copy(
                     file.getInputStream(),
                     Paths.get(filePath)
