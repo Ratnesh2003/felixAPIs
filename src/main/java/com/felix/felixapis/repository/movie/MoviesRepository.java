@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface MoviesRepository extends JpaRepository<Movie, Integer> {
 
-    @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"movie_year\", \"movie_restriction\", \"movie_length\" from \"felix_movies\", \"category\" where \"category_name\" like ?1 and \"movie_id\" = \"id\"", nativeQuery = true)
+    @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"movie_year\", \"movie_restriction\", \"movie_length\", \"cover_image_serving_path\", \"cover_image_path\" from \"felix_movies\", \"category\" where \"category_name\" like ?1 and \"movie_id\" = \"id\"", nativeQuery = true)
     List<Movie> findAllMoviesWhereCategory(String category);
 
     List<Movie> searchMoviesByMovieNameContainingIgnoreCase(String searchText);
