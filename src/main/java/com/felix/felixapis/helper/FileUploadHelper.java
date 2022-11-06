@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 @Component
 public class FileUploadHelper {
@@ -17,11 +16,16 @@ public class FileUploadHelper {
 
     public boolean uploadFile(MultipartFile file) {
         boolean fileUploaded = false;
+        String filePath = UPLOAD_DIR + File.separator + file.getOriginalFilename();
         try {
+            File filePathCheck = new File(filePath);
+            if(!filePathCheck.exists()) {
+                filePathCheck.mkdir();
+            }
+
             Files.copy(
                     file.getInputStream(),
-                    Paths.get(UPLOAD_DIR + File.separator + file.getOriginalFilename()),
-                    StandardCopyOption.REPLACE_EXISTING
+                    Paths.get(filePath)
             );
             fileUploaded = true;
         } catch (Exception e) {
