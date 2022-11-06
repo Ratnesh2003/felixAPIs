@@ -1,5 +1,7 @@
 package com.felix.felixapis.models.auth;
 
+import com.felix.felixapis.models.movie.WatchedHistory;
+
 import javax.persistence.*;
 import java.util.List;
 

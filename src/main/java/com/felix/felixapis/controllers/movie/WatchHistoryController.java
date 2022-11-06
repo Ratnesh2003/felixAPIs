@@ -1,10 +1,10 @@
 package com.felix.felixapis.controllers.movie;
 
 import com.felix.felixapis.dto.WatchedHistoryRequest;
-import com.felix.felixapis.models.WatchedHistory;
+import com.felix.felixapis.models.movie.WatchedHistory;
 import com.felix.felixapis.models.movie.Movie;
-import com.felix.felixapis.repository.UserRepository;
 import com.felix.felixapis.repository.WatchedHistoryRepository;
+import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;

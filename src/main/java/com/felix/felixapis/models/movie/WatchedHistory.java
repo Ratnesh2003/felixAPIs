@@ -1,4 +1,4 @@
-package com.felix.felixapis.models;
+package com.felix.felixapis.models.movie;
 
 
 
