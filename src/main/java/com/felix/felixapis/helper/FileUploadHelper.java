@@ -20,7 +20,7 @@ public class FileUploadHelper {
         try {
             File newFile = new File(UPLOAD_DIR);
             if(!newFile.exists()){
-                newFile.createNewFile();
+                newFile.mkdir();
             }
 
             Files.copy(
