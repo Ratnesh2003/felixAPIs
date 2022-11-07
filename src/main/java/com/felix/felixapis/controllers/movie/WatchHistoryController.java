@@ -66,8 +66,8 @@ public String deleteWatchedMovie(HttpServletRequest httpRequest) {
 
 
 @Transactional
-@DeleteMapping("/api/history/delete/{movieId}")
-public String deleteWatchedMovie(@PathVariable long movieId,HttpServletRequest httpRequest) {
+@DeleteMapping("/api/history/delete")
+public String deleteWatchedMovie(@RequestParam long movieId,HttpServletRequest httpRequest) {
      String requestTokenHeader = httpRequest.getHeader("Authorization");
      String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
      long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
