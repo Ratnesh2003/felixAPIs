@@ -14,9 +14,9 @@ public class FileUploadHelper {
     private String UPLOAD_DIR;
 
 
-    public boolean uploadFile(MultipartFile file) {
+    public boolean uploadFile(MultipartFile file, String fileName) {
         boolean fileUploaded = false;
-        String filePath = UPLOAD_DIR + File.separator + file.getOriginalFilename();
+        String filePath = UPLOAD_DIR + File.separator + fileName;
         try {
             File newFile = new File(UPLOAD_DIR);
             if(!newFile.exists()){

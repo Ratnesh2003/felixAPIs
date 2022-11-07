@@ -1,13 +1,15 @@
 package com.felix.felixapis.controllers.movie;
 
-import com.felix.felixapis.dto.WatchedHistoryRequest;
+import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.WatchedHistory;
 import com.felix.felixapis.models.movie.Movie;
+import com.felix.felixapis.payload.request.movie.WishlistRequest;
+import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
 import com.felix.felixapis.repository.WatchedHistoryRepository;
 import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,17 +18,25 @@ import java.util.List;
 
 @RestController
 public class WatchHistoryController {
-    @Autowired
-    private WatchedHistoryRepository watchedHistoryRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
+    private final WatchedHistoryRepository watchedHistoryRepository;
+    private final UserRepository userRepository;
+    final
     MoviesRepository moviesRepository;
-    @Autowired
+    final
     JwtUtil jwtUtil;
+    final
+    ImageIDFromMovie imageIDFromMovie;
 
-@PostMapping("/api/home/watchedMovie")
-public String watchedHistory(@RequestBody WatchedHistoryRequest watchedHistoryRequest, HttpServletRequest httpRequest) {
+    public WatchHistoryController(WatchedHistoryRepository watchedHistoryRepository, UserRepository userRepository, MoviesRepository moviesRepository, JwtUtil jwtUtil, ImageIDFromMovie imageIDFromMovie) {
+        this.watchedHistoryRepository = watchedHistoryRepository;
+        this.userRepository = userRepository;
+        this.moviesRepository = moviesRepository;
+        this.jwtUtil = jwtUtil;
+        this.imageIDFromMovie = imageIDFromMovie;
+    }
+
+    @PostMapping("/api/history/add")
+public String addToWatchedHistory(@RequestBody WishlistRequest watchedHistoryRequest, HttpServletRequest httpRequest) {
     String requestTokenHeader = httpRequest.getHeader("Authorization");
     String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
     long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
@@ -36,16 +46,16 @@ public String watchedHistory(@RequestBody WatchedHistoryRequest watchedHistoryRe
 }
 
 
-@GetMapping("/api/home/watched-history")
-public List<Movie> getWatchedHistory(HttpServletRequest httpRequest) {
+@GetMapping("/api/history/get")
+public ResponseEntity<List<MoviesWithCategoryResponse>> getWatchedHistory(HttpServletRequest httpRequest) {
     String requestTokenHeader = httpRequest.getHeader("Authorization");
     String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
     long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
-    List<Movie> WatchHistory = moviesRepository.findWatchedHistoryWhereUserId(userId);
-    return WatchHistory;
+    List<Movie> watchHistory = moviesRepository.findWatchedHistoryWhereUserId(userId);
+    return imageIDFromMovie.getImageAndIdFromMovieModel(watchHistory, httpRequest);
 }
 @Transactional
-@DeleteMapping("/api/watched-history/clear-all-history")
+@DeleteMapping("/api/history/clear")
 public String deleteWatchedMovie(HttpServletRequest httpRequest) {
     String requestTokenHeader = httpRequest.getHeader("Authorization");
     String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
@@ -56,7 +66,7 @@ public String deleteWatchedMovie(HttpServletRequest httpRequest) {
 
 
 @Transactional
-@DeleteMapping("/api/watched-history/delete/{movieId}")
+@DeleteMapping("/api/history/delete/{movieId}")
 public String deleteWatchedMovie(@PathVariable long movieId,HttpServletRequest httpRequest) {
      String requestTokenHeader = httpRequest.getHeader("Authorization");
      String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));

@@ -11,8 +11,9 @@ import java.io.IOException;
 @Service
 public class MovieService {
 
-    public Movie getJson(String movieRequest, MultipartFile file) throws IOException {
-        String coverImageName = StringUtils.cleanPath(file.getOriginalFilename());
+    public Movie getJson(String movieRequest, String fileName) throws IOException {
+//        String coverImageName = StringUtils.cleanPath(file.getOriginalFilename());
+//        String coverImageName = fileName;
         Movie newMovie = new Movie();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -20,7 +21,7 @@ public class MovieService {
         } catch (IOException e) {
             System.out.println("Error occurred while converting to JSON");
         }
-        newMovie.setCoverImagePath(coverImageName);
+        newMovie.setCoverImagePath(fileName);
         return newMovie;
     }
 }

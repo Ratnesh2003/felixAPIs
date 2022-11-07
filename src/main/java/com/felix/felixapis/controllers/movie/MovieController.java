@@ -1,6 +1,7 @@
 package com.felix.felixapis.controllers.movie;
 
 import com.felix.felixapis.helper.FileUploadHelper;
+import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
 import com.felix.felixapis.repository.movie.MoviesRepository;
@@ -13,13 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class MovieController {
@@ -33,11 +33,14 @@ public class MovieController {
 
     private final MovieService movieService;
 
-    public MovieController(MoviesRepository moviesRepository, SearchService searchService, MovieService movieService, FileUploadHelper fileUploadHelper) {
+    private final ImageIDFromMovie imageIDFromMovie;
+
+    public MovieController(MoviesRepository moviesRepository, SearchService searchService, MovieService movieService, FileUploadHelper fileUploadHelper, ImageIDFromMovie imageIDFromMovie) {
         this.moviesRepository = moviesRepository;
         this.searchService = searchService;
         this.movieService = movieService;
         this.fileUploadHelper = fileUploadHelper;
+        this.imageIDFromMovie = imageIDFromMovie;
     }
 
 
@@ -54,9 +57,14 @@ public class MovieController {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Image format must be JPEG only");
         }
 
-        boolean uploadStatus = fileUploadHelper.uploadFile(file);
+        String fileName = file.getOriginalFilename();
+        String randomId = UUID.randomUUID().toString();
+        fileName = randomId.concat(fileName.substring(fileName.lastIndexOf(".")));
+
+        boolean uploadStatus = fileUploadHelper.uploadFile(file, fileName);
         if(uploadStatus) {
-            Movie newMovie = movieService.getJson(moviesRequest, file);
+
+            Movie newMovie = movieService.getJson(moviesRequest, fileName);
             moviesRepository.save(newMovie);
             return ResponseEntity.status(HttpStatus.OK).body("Movie uploaded successfully");
         } else {
@@ -76,25 +84,9 @@ public class MovieController {
     public ResponseEntity<List<MoviesWithCategoryResponse>> getHomeMovies(@RequestParam String category, HttpServletRequest request) {
 
         List<Movie> moviesByCategory = moviesRepository.findAllMoviesWhereCategory(category);
-        List<MoviesWithCategoryResponse> moviesWithCategoryResponses = new ArrayList<>();
 
-        for (Movie movie : moviesByCategory) {
-            String baseURL = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null).build().toUriString();
-            String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movie.getCoverImagePath();
-            movie.setCoverImageServingPath(coverImageURL);
-            MoviesWithCategoryResponse moviesWithCategory = new MoviesWithCategoryResponse(
-                    movie.getId(),
-                    movie.getCoverImageServingPath()
-            );
-            moviesWithCategoryResponses.add(moviesWithCategory);
+        return imageIDFromMovie.getImageAndIdFromMovieModel(moviesByCategory, request);
 
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(moviesWithCategoryResponses);
-    }
-
-    @GetMapping("/api/home/movies")
-    public List<Movie> getMovies(@RequestParam String category) {
-        return moviesRepository.findAllMoviesWhereCategory(category);
     }
 
     @GetMapping("/api/home/search")
