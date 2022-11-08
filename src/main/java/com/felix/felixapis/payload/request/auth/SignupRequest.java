@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 public class SignupRequest {
     @NotNull
-    @Size(min = 4,  max = 30)
+    @Size(max = 30)
     private String firstName;
     @NotNull
     @Size(max = 30)

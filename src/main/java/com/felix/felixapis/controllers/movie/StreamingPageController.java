@@ -18,11 +18,16 @@ import java.util.List;
 @RestController
 public class StreamingPageController {
 
-    @Autowired
+    final
     MoviesRepository moviesRepository;
 
-    @Autowired
+    final
     StreamingPageService streamingPageService;
+
+    public StreamingPageController(MoviesRepository moviesRepository, StreamingPageService streamingPageService) {
+        this.moviesRepository = moviesRepository;
+        this.streamingPageService = streamingPageService;
+    }
 
 
     @GetMapping("/api/media-streaming")

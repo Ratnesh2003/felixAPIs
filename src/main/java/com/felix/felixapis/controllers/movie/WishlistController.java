@@ -9,6 +9,7 @@ import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.repository.movie.WishlistRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,13 +45,13 @@ public class WishlistController {
     }
 
     @PostMapping("/api/home/add-to-wishlist")
-    public String addToWishlist(@RequestBody WishlistRequest wishlistRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> addToWishlist(@RequestBody WishlistRequest wishlistRequest, HttpServletRequest httpRequest) {
         String requestTokenHeader = httpRequest.getHeader("Authorization");
         String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
         long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
         Wishlist newMovie = new Wishlist(userId, wishlistRequest.getMovieId());
         wishlistRepository.save(newMovie);
-        return "Added to your wishlist" ;
+        return ResponseEntity.status(HttpStatus.OK).body("Added to your wishlist");
     }
 
     @GetMapping("/api/home/wishlist")

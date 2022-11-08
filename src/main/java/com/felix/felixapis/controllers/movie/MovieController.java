@@ -82,13 +82,13 @@ public class MovieController {
         }
     }
 
-    @GetMapping("api/home/get-movie-cover/{coverImageName}")
-    public void getMovieCover(@PathVariable("coverImageName") String coverImageName, HttpServletResponse response) throws IOException {
-        String fullPath = UPLOAD_DIR + File.separator + coverImageName;
-        InputStream is = new FileInputStream(fullPath);
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(is, response.getOutputStream());
-    }
+//    @GetMapping("api/home/get-movie-cover/{coverImageName}")
+//    public void getMovieCover(@PathVariable("coverImageName") String coverImageName, HttpServletResponse response) throws IOException {
+//        String fullPath = UPLOAD_DIR + File.separator + coverImageName;
+//        InputStream is = new FileInputStream(fullPath);
+//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+//        StreamUtils.copy(is, response.getOutputStream());
+//    }
 
     @GetMapping(value = "/api/home/movies-by-category")
     public ResponseEntity<List<MoviesWithCategoryResponse>> getHomeMovies(@RequestParam String category, HttpServletRequest request) {

@@ -1,6 +1,7 @@
 package com.felix.felixapis.configurations;
 
 import com.felix.felixapis.security.jwt.AuthTokenFilter;
+import com.felix.felixapis.security.jwt.JWTAuthEntryPoint;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    JWTAuthEntryPoint jwtAuthEntryPoint;
 
     private final AuthTokenFilter authTokenFilter;
 
@@ -54,6 +58,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/home/get-movie-cover/**").permitAll()
                 .antMatchers("/stream-movie/**").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
