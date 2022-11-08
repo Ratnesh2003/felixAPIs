@@ -1,31 +1,17 @@
-package com.felix.felixapis.models.movie;
+package com.felix.felixapis.payload.response;
 
-
-//import com.felix.felixapis.models.WatchedMovie;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.felix.felixapis.models.movie.Genre;
 import java.util.List;
 
-@Entity
-@Table(name = "felix_movies")
-public class Movie {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name="movie_id")
+public class MovieResponse {
+
     private Long id;
 
-
-    @NotNull
-    @Size(max = 40)
     private String movieName;
 
     private String movieDescription;
 
     private String movieCast;
-
-//    private String movieWriters;
 
     private int movieYear;
 
@@ -33,34 +19,17 @@ public class Movie {
 
     private String movieLength;
 
-    @OneToMany(targetEntity = Genre.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "movie_id", referencedColumnName = "id")
     private List<Genre> genres;
-
-    @OneToMany(targetEntity = Category.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "movie_id", referencedColumnName = "id")
-    private List<Category> categories;
-
-    private String coverImagePath;
 
     private String coverImageServingPath;
 
-    private String streamMovieName;
-
     private String streamMoviePath;
 
-    public Movie() {
+    public MovieResponse() {
     }
 
-    public Movie(String movieName,
-                 String movieDescription,
-                 String movieCast, int movieYear,
-                 String movieRestriction,
-                 String movieLength,
-                 List<Genre> genres,
-                 List<Category> categories,
-                 String coverImagePath,
-                 String streamMovieName) {
+    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath) {
+        this.id = id;
         this.movieName = movieName;
         this.movieDescription = movieDescription;
         this.movieCast = movieCast;
@@ -68,9 +37,8 @@ public class Movie {
         this.movieRestriction = movieRestriction;
         this.movieLength = movieLength;
         this.genres = genres;
-        this.categories = categories;
-        this.coverImagePath = coverImagePath;
-        this.streamMovieName = streamMovieName;
+        this.coverImageServingPath = coverImageServingPath;
+        this.streamMoviePath = streamMoviePath;
     }
 
     public Long getId() {
@@ -137,36 +105,12 @@ public class Movie {
         this.genres = genres;
     }
 
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public String getCoverImagePath() {
-        return coverImagePath;
-    }
-
-    public void setCoverImagePath(String coverImagePath) {
-        this.coverImagePath = coverImagePath;
-    }
-
     public String getCoverImageServingPath() {
         return coverImageServingPath;
     }
 
     public void setCoverImageServingPath(String coverImageServingPath) {
         this.coverImageServingPath = coverImageServingPath;
-    }
-
-    public String getStreamMovieName() {
-        return streamMovieName;
-    }
-
-    public void setStreamMovieName(String streamMovieName) {
-        this.streamMovieName = streamMovieName;
     }
 
     public String getStreamMoviePath() {

@@ -1,4 +1,4 @@
-package com.felix.felixapis.security;
+package com.felix.felixapis.configurations;
 
 import com.felix.felixapis.security.jwt.AuthTokenFilter;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
@@ -51,8 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated()
                 .antMatchers("/api/home/get-movie-cover/**").permitAll()
+                .antMatchers("/stream-movie/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
