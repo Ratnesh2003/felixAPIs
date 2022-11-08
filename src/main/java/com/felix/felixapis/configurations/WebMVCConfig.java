@@ -11,6 +11,6 @@ public class WebMVCConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/stream-movie/**")
-                .addResourceLocations("file:\\"+ System.getProperty("user.dir") +"\\src\\main\\resources\\static\\");
+                .addResourceLocations("file:\\"+ System.getProperty("user.dir") +"\\target\\classes\\static\\");
     }
 }
