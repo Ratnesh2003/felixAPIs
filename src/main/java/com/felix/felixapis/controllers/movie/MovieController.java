@@ -23,13 +23,14 @@ import java.util.UUID;
 
 @RestController
 public class MovieController {
-    @Value("${project.image}")
+//    @Value("${project.image}")
+    @Value(("/app/target/classes/static"))
     private String UPLOAD_DIR;
     private final MoviesRepository moviesRepository;
 
     private final SearchService searchService;
 
-    private FileUploadHelper fileUploadHelper;
+    private final FileUploadHelper fileUploadHelper;
 
     private final MovieService movieService;
 
