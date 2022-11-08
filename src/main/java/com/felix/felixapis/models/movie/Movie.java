@@ -1,6 +1,8 @@
 package com.felix.felixapis.models.movie;
 
 
+//import com.felix.felixapis.models.WatchedMovie;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,7 +13,9 @@ import java.util.List;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name="movie_id")
     private Long id;
+
 
     @NotNull
     @Size(max = 40)
@@ -37,10 +41,16 @@ public class Movie {
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     private List<Category> categories;
 
+//    @Lob
+//    @Column(length = 1500)
+    private String coverImagePath;
+
+    private String coverImageServingPath;
+
     public Movie() {
     }
 
-    public Movie(String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, List<Category> categories) {
+    public Movie(String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, List<Category> categories, String coverImagePath) {
         this.movieName = movieName;
         this.movieDescription = movieDescription;
         this.movieCast = movieCast;
@@ -50,6 +60,7 @@ public class Movie {
         this.movieLength = movieLength;
         this.genres = genres;
         this.categories = categories;
+        this.coverImagePath = coverImagePath;
     }
 
     public Long getId() {
@@ -131,5 +142,21 @@ public class Movie {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
+    }
+
+    public String getCoverImageServingPath() {
+        return coverImageServingPath;
+    }
+
+    public void setCoverImageServingPath(String coverImageServingPath) {
+        this.coverImageServingPath = coverImageServingPath;
     }
 }
