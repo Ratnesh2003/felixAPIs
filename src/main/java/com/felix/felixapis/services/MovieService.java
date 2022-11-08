@@ -11,7 +11,7 @@ import java.io.IOException;
 @Service
 public class MovieService {
 
-    public Movie getJson(String movieRequest, String fileName) throws IOException {
+    public Movie getJson(String movieRequest, String fileName, String videoFileName) throws IOException {
 //        String coverImageName = StringUtils.cleanPath(file.getOriginalFilename());
 //        String coverImageName = fileName;
         Movie newMovie = new Movie();
@@ -22,6 +22,7 @@ public class MovieService {
             System.out.println("Error occurred while converting to JSON");
         }
         newMovie.setCoverImagePath(fileName);
+        newMovie.setStreamMovieName(videoFileName);
         return newMovie;
     }
 }

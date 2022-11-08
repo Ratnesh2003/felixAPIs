@@ -48,23 +48,32 @@ public class MovieController {
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
-    public ResponseEntity<?> addNewMovie(@RequestPart("movie") String moviesRequest, @RequestPart("coverImage")MultipartFile file) throws IOException {
+    public ResponseEntity<?> addNewMovie(@RequestPart("movie") String moviesRequest, @RequestPart("coverImage")MultipartFile file, @RequestPart("movieVideo")MultipartFile video) throws IOException {
 
-        if(file.isEmpty()) {
+        if(file.isEmpty() || video.isEmpty()) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("File cannot be empty");
         }
-        if(!file.getContentType().equals("image/jpeg")) {
+        if(!(file.getContentType().equals("image/jpeg") || file.getContentType().equals("image/png"))) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Image format must be JPEG only");
         }
+        if(!video.getContentType().equals("video/mp4")) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Incorrect video format");
+        }
 
+        String videoFileName = video.getOriginalFilename();
         String fileName = file.getOriginalFilename();
+
+        String randomIdVideo = UUID.randomUUID().toString();
         String randomId = UUID.randomUUID().toString();
+
+        videoFileName = randomIdVideo.concat(videoFileName.substring(videoFileName.lastIndexOf(".")));
         fileName = randomId.concat(fileName.substring(fileName.lastIndexOf(".")));
 
         boolean uploadStatus = fileUploadHelper.uploadFile(file, fileName);
-        if(uploadStatus) {
+        boolean videoUploadStatus = fileUploadHelper.uploadFile(video, videoFileName);
+        if(uploadStatus && videoUploadStatus) {
 
-            Movie newMovie = movieService.getJson(moviesRequest, fileName);
+            Movie newMovie = movieService.getJson(moviesRequest, fileName, videoFileName);
             moviesRepository.save(newMovie);
             return ResponseEntity.status(HttpStatus.OK).body("Movie uploaded successfully");
         } else {
