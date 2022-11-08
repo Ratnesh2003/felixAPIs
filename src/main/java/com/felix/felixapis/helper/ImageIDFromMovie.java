@@ -18,7 +18,8 @@ public class ImageIDFromMovie {
 
         for(Movie movie : movieList) {
             String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
-            String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movie.getCoverImagePath();
+//            String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movie.getCoverImagePath();
+            String coverImageURL = baseURL + "/stream-movie/" + movie.getCoverImagePath();
             movie.setCoverImageServingPath(coverImageURL);
             MoviesWithCategoryResponse moviesWithCategory = new MoviesWithCategoryResponse(
                     movie.getId(),
