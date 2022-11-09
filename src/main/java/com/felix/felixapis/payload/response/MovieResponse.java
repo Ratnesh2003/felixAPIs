@@ -25,10 +25,12 @@ public class MovieResponse {
 
     private String streamMoviePath;
 
+    private Boolean addedToWishlist;
+
     public MovieResponse() {
     }
 
-    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath) {
+    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath, Boolean addedToWishlist) {
         this.id = id;
         this.movieName = movieName;
         this.movieDescription = movieDescription;
@@ -39,6 +41,7 @@ public class MovieResponse {
         this.genres = genres;
         this.coverImageServingPath = coverImageServingPath;
         this.streamMoviePath = streamMoviePath;
+        this.addedToWishlist = addedToWishlist;
     }
 
     public Long getId() {
@@ -119,5 +122,13 @@ public class MovieResponse {
 
     public void setStreamMoviePath(String streamMoviePath) {
         this.streamMoviePath = streamMoviePath;
+    }
+
+    public Boolean getAddedToWishlist() {
+        return addedToWishlist;
+    }
+
+    public void setAddedToWishlist(Boolean addedToWishlist) {
+        this.addedToWishlist = addedToWishlist;
     }
 }

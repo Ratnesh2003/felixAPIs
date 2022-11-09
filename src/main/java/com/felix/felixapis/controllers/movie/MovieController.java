@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RestController
 public class MovieController {
-//    @Value("${project.image}")
+//    @Value("${project.image}") original
     @Value(("/app/target/classes/static"))
     private String UPLOAD_DIR;
     private final MoviesRepository moviesRepository;
@@ -81,14 +81,7 @@ public class MovieController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
         }
     }
-
-//    @GetMapping("api/home/get-movie-cover/{coverImageName}")
-//    public void getMovieCover(@PathVariable("coverImageName") String coverImageName, HttpServletResponse response) throws IOException {
-//        String fullPath = UPLOAD_DIR + File.separator + coverImageName;
-//        InputStream is = new FileInputStream(fullPath);
-//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-//        StreamUtils.copy(is, response.getOutputStream());
-//    }
+    
 
     @GetMapping(value = "/api/home/movies-by-category")
     public ResponseEntity<List<MoviesWithCategoryResponse>> getHomeMovies(@RequestParam String category, HttpServletRequest request) {
