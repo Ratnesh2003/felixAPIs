@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+import java.util.List;
+
 public interface GenreRepository extends JpaRepository<Genre, Long> {
 
 }

@@ -41,19 +41,36 @@ public class Movie {
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     private List<Category> categories;
 
+    private String coverImagePath;
+
+    private String coverImageServingPath;
+
+    private String streamMovieName;
+
+    private String streamMoviePath;
+
     public Movie() {
     }
 
-    public Movie(String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, List<Category> categories) {
+    public Movie(String movieName,
+                 String movieDescription,
+                 String movieCast, int movieYear,
+                 String movieRestriction,
+                 String movieLength,
+                 List<Genre> genres,
+                 List<Category> categories,
+                 String coverImagePath,
+                 String streamMovieName) {
         this.movieName = movieName;
         this.movieDescription = movieDescription;
         this.movieCast = movieCast;
-//        this.movieWriters = movieWriters;
         this.movieYear = movieYear;
         this.movieRestriction = movieRestriction;
         this.movieLength = movieLength;
         this.genres = genres;
         this.categories = categories;
+        this.coverImagePath = coverImagePath;
+        this.streamMovieName = streamMovieName;
     }
 
     public Long getId() {
@@ -87,15 +104,6 @@ public class Movie {
     public void setMovieCast(String movieCast) {
         this.movieCast = movieCast;
     }
-
-//    public String getMovieWriters() {
-//        return movieWriters;
-//    }
-
-//    public void setMovieWriters(String movieWriters) {
-//        this.movieWriters = movieWriters;
-//    }
-
 
     public int getMovieYear() {
         return movieYear;
@@ -135,5 +143,37 @@ public class Movie {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
+    }
+
+    public String getCoverImageServingPath() {
+        return coverImageServingPath;
+    }
+
+    public void setCoverImageServingPath(String coverImageServingPath) {
+        this.coverImageServingPath = coverImageServingPath;
+    }
+
+    public String getStreamMovieName() {
+        return streamMovieName;
+    }
+
+    public void setStreamMovieName(String streamMovieName) {
+        this.streamMovieName = streamMovieName;
+    }
+
+    public String getStreamMoviePath() {
+        return streamMoviePath;
+    }
+
+    public void setStreamMoviePath(String streamMoviePath) {
+        this.streamMoviePath = streamMoviePath;
     }
 }

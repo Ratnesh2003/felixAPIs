@@ -15,6 +15,7 @@ import com.felix.felixapis.security.services.EmailServices;
 import com.felix.felixapis.security.services.UserDetailsImpl;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -69,16 +70,16 @@ public class AuthController {
 
 
     @PostMapping("/api/auth/signup")
-    public String registerUser(@Valid @RequestBody SignupRequest signupRequest, HttpServletRequest httpRequest) throws MessagingException {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest, HttpServletRequest httpRequest) throws MessagingException {
 
         String baseURL =  ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
 
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
             UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
             if(!userDetails.isEnabled()) {
-                return "Please verify your email first.";
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please verify your email first.");
             } else {
-                return "Email already in use";
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already in use");
             }
         }
 
@@ -99,11 +100,11 @@ public class AuthController {
                 "To verify your account, please click the following link: \n" +
                 "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
                 "\"> Activate now</a>");
-        return "Please check your email for verification";
+        return ResponseEntity.status(HttpStatus.OK).body("Please check your email for verification");
     }
 
     @PutMapping("/api/auth/resend-verification-link")
-    public String resendVerificationLink(@RequestBody LoginRequest loginRequest, HttpServletRequest httpRequest) throws MessagingException {
+    public ResponseEntity<?> resendVerificationLink(@RequestBody LoginRequest loginRequest, HttpServletRequest httpRequest) throws MessagingException {
 
         String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
 
@@ -121,31 +122,30 @@ public class AuthController {
                             "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
                             "\"> Activate now</a>");
 
-            return "Verification link sent to the given Email";
+            return ResponseEntity.status(HttpStatus.OK).body("Verification link sent to the given Email");
         } else {
-            return "Invalid user";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid User");
         }
     }
 
     @RequestMapping(value = "/api/auth/confirm-account", method = {RequestMethod.GET, RequestMethod.POST})
-    public String confirmUserAccount(@RequestParam("token")String confirmationToken) {
+    public ResponseEntity confirmUserAccount(@RequestParam("token")String confirmationToken) {
         EmailConfirmationModel token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
         if(new Date().getTime() > token.getCreationDate().getTime() + 5*60*1000) {
-            return "Verification link expired";
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Verification link expired");
         } else {
             if(token != null) {
                 User user = userRepository.findUserById(token.getUserId());
                 user.setEnabled(true);
                 userRepository.save(user);
-                return "Account verified";
+                return ResponseEntity.status(HttpStatus.OK).body("Account verified");
             } else {
-                return "The link is invalid";
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("The link is invalid");
             }
         }
     }
 
     @PostMapping("/api/auth/login")
-//    @ResponseBody
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws Exception {
 
         UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
@@ -153,7 +153,7 @@ public class AuthController {
                 this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
             } catch (UsernameNotFoundException ex) {
-                throw new Exception("Invalid Email or Password");
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
             }
         String jwtCookie = jwtUtil.generateToken(userDetails);
 
@@ -163,7 +163,7 @@ public class AuthController {
     }
 
     @PutMapping("/api/auth/forgot-password")
-    public String forgotPass(@RequestBody LoginRequest loginRequest) throws MessagingException {
+    public ResponseEntity<?> forgotPass(@RequestBody LoginRequest loginRequest) throws MessagingException {
         if(userRepository.existsByEmailIgnoreCase(loginRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(loginRequest.getEmail());
             OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
@@ -183,58 +183,58 @@ public class AuthController {
                     loginRequest.getEmail(), "RESET PASSWORD FELIX",
                     "OTP to reset password:  <b>"  + Integer.toString(otp) + "</b>"
             );
-            return "OTP sent on the given mail";
+            return ResponseEntity.ok().body("OTP sent on the given mail");
         } else {
-            return "User not found with the given email";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with the given email");
         }
     }
     @PostMapping("/api/auth/confirm-otp")
-    public String confirmOtp(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
+    public ResponseEntity<?> confirmOtp(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
         if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
             OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
 
             if(new Date().getTime() > otpModel.getCreationDate().getTime() + 5*60*1000) {
-                return "OTP Expired";
+                return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("OTP Expired");
             } else {
                 int originalOTP = otpModel.getOtp();
                 int providedOTP = confirmOTPRequest.getOtp();
                 if(originalOTP == providedOTP) {
-                    return "OTP Verified";
+                    return ResponseEntity.status(HttpStatus.OK).body("OTP Verified");
                 } else {
-                    return "Incorrect OTP";
+                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Incorrect OTP");
                 }
             }
         } else {
-            return "User doesn't exist";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with the given email");
         }
     }
 
     @PutMapping("/api/auth/change-password")
-    public String changePass(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
+    public ResponseEntity<?> changePass(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
         if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
             OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
             if(new Date().getTime() > otpModel.getCreationDate().getTime() + 5*60*1000) {
-                return "OTP Expired";
+                return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("OTP Expired");
             } else {
                 int originalOTP = otpModel.getOtp();
                 int providedOTP = confirmOTPRequest.getOtp();
                 if(originalOTP == providedOTP) {
                     user.setPassword(passwordEncoder.encode(confirmOTPRequest.getPassword()));
                     userRepository.save(user);
-                    return "Password changed successfully";
+                    return ResponseEntity.status(HttpStatus.OK).body("Password changed successfully");
                 } else {
-                    return "Incorrect OTP";
+                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Incorrect OTP");
                 }
             }
         } else {
-            return "User not found";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with the given email");
         }
     }
 
     @PutMapping("/api/auth/resend-otp")
-    public String resendOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) throws MessagingException {
+    public ResponseEntity<?> resendOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) throws MessagingException {
         if(userRepository.existsByEmailIgnoreCase(confirmOTPRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(confirmOTPRequest.getEmail());
             OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
@@ -248,9 +248,9 @@ public class AuthController {
                     confirmOTPRequest.getEmail(), "RESET PASSWORD FELIX",
                     "OTP to reset password:  <b>"  + Integer.toString(otp) + "</b>"
             );
-            return "OTP sent on the given mail";
+            return ResponseEntity.status(HttpStatus.OK).body("OTP sent on the given email");
         } else {
-            return "User doesn't exist";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with the given email");
         }
     }
 

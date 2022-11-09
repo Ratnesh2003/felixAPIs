@@ -24,11 +24,7 @@ public class AddCategoryController {
     @PostMapping("/api/admin/add-new-category")
     public ResponseEntity<?> addCategory(@RequestBody CategoryTypeRequest categoryRequest){
        return addCategoryService.addCategory(categoryRequest.getCategoryType());
-//        return ResponseEntity.status(HttpStatus.OK).body("Added new category");
+
     }
-//    @GetMapping("/api/admin/get-all-categories")
-//    public String getAllCategory(@RequestParam String categoryType){
-////        List<AddCategoryModel> allCategories =  addCategoryRepository.findAddCategoryModelByCategoryType(categoryType);
-//
-//    }
+
 }
