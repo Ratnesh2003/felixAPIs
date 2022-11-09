@@ -2,8 +2,11 @@ package com.felix.felixapis.controllers.movie;
 
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.payload.request.movie.MoviesRequest;
+import com.felix.felixapis.repository.movie.CategoryRepository;
+import com.felix.felixapis.repository.movie.GenreRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.services.SearchService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,10 @@ import java.util.List;
 
 @RestController
 public class MovieController {
+    @Autowired
+    CategoryRepository categoryRepository;
+    @Autowired
+    GenreRepository genreRepository;
     private final MoviesRepository moviesRepository;
 
     private final SearchService searchService;
@@ -43,4 +50,6 @@ public class MovieController {
             return searchService.searchUsingGenreName(searchText.toUpperCase());
         }
     }
+
+
 }
