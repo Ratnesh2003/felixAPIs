@@ -12,14 +12,14 @@ import com.felix.felixapis.repository.movie.WishlistRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
+@Transactional
 public class WishlistController {
     final
     GetDetailsFromUser getDetailsFromUser;
@@ -56,6 +56,13 @@ public class WishlistController {
         Wishlist newMovie = new Wishlist(userId, wishlistRequest.getMovieId());
         wishlistRepository.save(newMovie);
         return ResponseEntity.status(HttpStatus.OK).body("Added to your wishlist");
+    }
+
+    @DeleteMapping("/api/home/remove-from-wishlist")
+    public ResponseEntity<?> removeFromWishlist(@RequestParam long movieId, HttpServletRequest httpRequest) {
+        long userId = getDetailsFromUser.getUserId(httpRequest);
+        wishlistRepository.deleteByMovieIdAndUserId(movieId, userId);
+        return ResponseEntity.status(HttpStatus.OK).body("Removed from wishlist");
     }
 
     @GetMapping("/api/home/wishlist")

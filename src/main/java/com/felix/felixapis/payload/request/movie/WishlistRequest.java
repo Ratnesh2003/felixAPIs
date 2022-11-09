@@ -1,6 +1,9 @@
 package com.felix.felixapis.payload.request.movie;
 
+import javax.validation.constraints.NotNull;
+
 public class WishlistRequest {
+    @NotNull
     private Long movieId;
 
     public WishlistRequest() {
