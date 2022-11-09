@@ -1,5 +1,6 @@
 package com.felix.felixapis.controllers.movie;
 
+import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.models.movie.Wishlist;
@@ -20,6 +21,8 @@ import java.util.List;
 
 @RestController
 public class WishlistController {
+    final
+    GetDetailsFromUser getDetailsFromUser;
 
     final
     JwtUtil jwtUtil;
@@ -36,7 +39,10 @@ public class WishlistController {
     final
     ImageIDFromMovie imageIDFromMovie;
 
-    public WishlistController(JwtUtil jwtUtil, UserRepository userRepository, WishlistRepository wishlistRepository, MoviesRepository moviesRepository, ImageIDFromMovie imageIDFromMovie) {
+
+
+    public WishlistController(GetDetailsFromUser getDetailsFromUser, JwtUtil jwtUtil, UserRepository userRepository, WishlistRepository wishlistRepository, MoviesRepository moviesRepository, ImageIDFromMovie imageIDFromMovie) {
+        this.getDetailsFromUser = getDetailsFromUser;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.wishlistRepository = wishlistRepository;
@@ -46,9 +52,7 @@ public class WishlistController {
 
     @PostMapping("/api/home/add-to-wishlist")
     public ResponseEntity<?> addToWishlist(@RequestBody WishlistRequest wishlistRequest, HttpServletRequest httpRequest) {
-        String requestTokenHeader = httpRequest.getHeader("Authorization");
-        String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
-        long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
+        long userId = getDetailsFromUser.getUserId(httpRequest);
         Wishlist newMovie = new Wishlist(userId, wishlistRequest.getMovieId());
         wishlistRepository.save(newMovie);
         return ResponseEntity.status(HttpStatus.OK).body("Added to your wishlist");
