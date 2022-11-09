@@ -25,6 +25,9 @@ public interface MoviesRepository extends JpaRepository<Movie, Integer> {
     @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"cover_image_serving_path\", \"cover_image_path\", \"movie_length\", \"movie_restriction\", \"movie_year\", \"stream_movie_name\", \"stream_movie_path\", \"upload_date\", \"likes_count\" from \"felix_movies\", \"wishlist\" where \"user_id\" = ?1 and \"id\" = \"movie_id\"", nativeQuery = true)
     List<Movie> findWishlistWhereUserId(Long userId);
 
+    @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"cover_image_serving_path\", \"cover_image_path\", \"movie_length\", \"movie_restriction\", \"movie_year\", \"stream_movie_name\", \"stream_movie_path\", \"upload_date\", \"likes_count\" from \"felix_movies\", \"liked_movies\" where \"user_id\" = ?1 and \"id\" = \"liked_movie_id\"", nativeQuery = true)
+    List<Movie> findLikedMoviesWhereUserId(Long userId);
+
     Movie findMovieById(Long movieId);
 
     @Query(value = "select \"genre_name\" from \"genre\" where \"movie_id\" = ?1 ", nativeQuery = true)

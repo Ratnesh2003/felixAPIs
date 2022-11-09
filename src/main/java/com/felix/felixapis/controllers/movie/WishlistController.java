@@ -39,8 +39,6 @@ public class WishlistController {
     final
     ImageIDFromMovie imageIDFromMovie;
 
-
-
     public WishlistController(GetDetailsFromUser getDetailsFromUser, JwtUtil jwtUtil, UserRepository userRepository, WishlistRepository wishlistRepository, MoviesRepository moviesRepository, ImageIDFromMovie imageIDFromMovie) {
         this.getDetailsFromUser = getDetailsFromUser;
         this.jwtUtil = jwtUtil;
@@ -67,10 +65,7 @@ public class WishlistController {
 
     @GetMapping("/api/home/wishlist")
     public ResponseEntity<List<MoviesWithCategoryResponse>> getWishlist(HttpServletRequest httpRequest) {
-
-        String requestTokenHeader = httpRequest.getHeader("Authorization");
-        String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
-        long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
+        long userId = getDetailsFromUser.getUserId(httpRequest);
         List<Movie> wishlist = moviesRepository.findWishlistWhereUserId(userId);
         return imageIDFromMovie.getImageAndIdFromMovieModel(wishlist, httpRequest);
     }
