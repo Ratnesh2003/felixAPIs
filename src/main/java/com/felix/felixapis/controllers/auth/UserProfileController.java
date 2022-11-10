@@ -1,19 +1,13 @@
-package com.felix.felixapis.controllers;
+package com.felix.felixapis.controllers.auth;
 
-import com.felix.felixapis.models.auth.User;
 import com.felix.felixapis.payload.response.UserInfoResponse;
-import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
-import com.felix.felixapis.services.ProfileServices;
+import com.felix.felixapis.services.auth.ProfileServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 @RestController
 public class UserProfileController {

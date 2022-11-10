@@ -1,10 +1,11 @@
-package com.felix.felixapis.controllers;
+package com.felix.felixapis.controllers.auth;
 
 import com.felix.felixapis.models.auth.EmailConfirmationModel;
 import com.felix.felixapis.models.auth.OTPModel;
 import com.felix.felixapis.models.auth.User;
 import com.felix.felixapis.payload.request.auth.ConfirmOTPRequest;
 import com.felix.felixapis.payload.request.auth.LoginRequest;
+import com.felix.felixapis.payload.request.auth.ResetPassRequest;
 import com.felix.felixapis.payload.request.auth.SignupRequest;
 import com.felix.felixapis.payload.response.UserInfoResponse;
 import com.felix.felixapis.repository.auth.ConfirmationTokenRepository;
@@ -14,6 +15,7 @@ import com.felix.felixapis.security.jwt.JwtUtil;
 import com.felix.felixapis.security.services.EmailServices;
 import com.felix.felixapis.security.services.UserDetailsImpl;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
+import com.felix.felixapis.services.auth.ResetPasswordService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,9 +57,12 @@ public class AuthController {
     final
     OTPRepository otpRepository;
 
+    final
+    ResetPasswordService resetPasswordService;
+
     Random random = new Random();
 
-    public AuthController(ConfirmationTokenRepository confirmationTokenRepository, EmailServices emailServices, AuthenticationManager authenticationManager, UserRepository userRepository, UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, OTPRepository otpRepository) {
+    public AuthController(ConfirmationTokenRepository confirmationTokenRepository, EmailServices emailServices, AuthenticationManager authenticationManager, UserRepository userRepository, UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, OTPRepository otpRepository, ResetPasswordService resetPasswordService) {
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.emailServices = emailServices;
         this.authenticationManager = authenticationManager;
@@ -66,6 +71,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.otpRepository = otpRepository;
+        this.resetPasswordService = resetPasswordService;
     }
 
 
@@ -252,6 +258,15 @@ public class AuthController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with the given email");
         }
+    }
+
+    @PutMapping("/api/auth/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPassRequest resetPassRequest, HttpServletRequest httpRequest) {
+        return resetPasswordService.resetPassword(
+                resetPassRequest.getEmail(),
+                resetPassRequest.getOldPassword(),
+                resetPassRequest.getNewPassword()
+        );
     }
 
 

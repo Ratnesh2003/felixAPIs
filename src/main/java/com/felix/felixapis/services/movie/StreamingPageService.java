@@ -1,4 +1,4 @@
-package com.felix.felixapis.services;
+package com.felix.felixapis.services.movie;
 
 import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.movie.Genre;

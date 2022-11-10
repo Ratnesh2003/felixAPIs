@@ -1,4 +1,4 @@
-package com.felix.felixapis.services;
+package com.felix.felixapis.services.movie;
 
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.repository.movie.MoviesRepository;

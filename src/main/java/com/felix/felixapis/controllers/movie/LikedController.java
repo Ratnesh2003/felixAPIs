@@ -7,7 +7,7 @@ import com.felix.felixapis.payload.request.movie.WishlistRequest;
 import com.felix.felixapis.repository.movie.LikedRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
-import com.felix.felixapis.services.LikeUnlikeService;
+import com.felix.felixapis.services.movie.LikeUnlikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
