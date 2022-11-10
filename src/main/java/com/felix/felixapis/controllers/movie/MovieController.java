@@ -4,6 +4,7 @@ import com.felix.felixapis.helper.FileUploadHelper;
 import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
+import com.felix.felixapis.payload.response.SearchMovieResponse;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.services.MovieService;
 import com.felix.felixapis.services.SearchService;
@@ -100,12 +101,13 @@ public class MovieController {
     }
 
     @GetMapping("/api/home/search")
-    public List<Movie> searchMovies(@RequestParam String searchText) {
+    public ResponseEntity<List<SearchMovieResponse>> searchMovies(@RequestParam String searchText, HttpServletRequest httpRequest) {
         List<Movie> result = searchService.searchUsingMovieName(searchText);
         if(!result.isEmpty()) {
-            return result;
+            return imageIDFromMovie.getImageIdNameFromMovieModel(result, httpRequest);
+//            return result;
         } else {
-            return searchService.searchUsingGenreName(searchText.toUpperCase());
+            return imageIDFromMovie.getImageIdNameFromMovieModel(searchService.searchUsingGenreName(searchText.toUpperCase()), httpRequest);
         }
     }
 }
