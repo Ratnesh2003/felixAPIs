@@ -7,16 +7,15 @@ import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.services.MovieService;
 import com.felix.felixapis.services.SearchService;
+import com.felix.felixapis.services.TrendingMoviesService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
 import java.util.UUID;
@@ -36,12 +35,15 @@ public class MovieController {
 
     private final ImageIDFromMovie imageIDFromMovie;
 
-    public MovieController(MoviesRepository moviesRepository, SearchService searchService, MovieService movieService, FileUploadHelper fileUploadHelper, ImageIDFromMovie imageIDFromMovie) {
+    private final TrendingMoviesService trendingMoviesService;
+
+    public MovieController(MoviesRepository moviesRepository, SearchService searchService, MovieService movieService, FileUploadHelper fileUploadHelper, ImageIDFromMovie imageIDFromMovie, TrendingMoviesService trendingMoviesService) {
         this.moviesRepository = moviesRepository;
         this.searchService = searchService;
         this.movieService = movieService;
         this.fileUploadHelper = fileUploadHelper;
         this.imageIDFromMovie = imageIDFromMovie;
+        this.trendingMoviesService = trendingMoviesService;
     }
 
 
@@ -89,7 +91,12 @@ public class MovieController {
         List<Movie> moviesByCategory = moviesRepository.findAllMoviesWhereCategory(category);
 
         return imageIDFromMovie.getImageAndIdFromMovieModel(moviesByCategory, request);
+    }
 
+    @GetMapping("/api/home/trending")
+    public ResponseEntity<List<MoviesWithCategoryResponse>> getTrendingMovies(HttpServletRequest request) {
+        List<Movie> trendingMovies = trendingMoviesService.getTrendingMovies();
+        return imageIDFromMovie.getImageAndIdFromMovieModel(trendingMovies, request);
     }
 
     @GetMapping("/api/home/search")
