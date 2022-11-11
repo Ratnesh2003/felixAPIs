@@ -2142,3 +2142,6 @@ delete from "felix_movies" where "movie_id" = 11 [42122-214]
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:833)
+2022-11-11 12:43:02 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "felix_user" not found; SQL statement:
+update "felix_user" set "role" = 'USER' where "id" = 4 [42102-214]

@@ -35,7 +35,6 @@ public class ResetPasswordService {
 
     public ResponseEntity<?> resetPassword(String email, String oldPass, String newPass) {
         if (userRepository.existsByEmailIgnoreCase(email)) {
-            System.out.println("exists");
             try {
                 this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, oldPass));
             } catch (Exception ex) {
