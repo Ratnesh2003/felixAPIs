@@ -1,7 +1,7 @@
 package com.felix.felixapis.models.movie;
 
 
-//import com.felix.felixapis.models.WatchedMovie;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

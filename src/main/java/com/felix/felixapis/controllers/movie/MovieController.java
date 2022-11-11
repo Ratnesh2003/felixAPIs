@@ -3,21 +3,15 @@ package com.felix.felixapis.controllers.movie;
 import com.felix.felixapis.helper.FileUploadHelper;
 import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.Movie;
-//<<<<<<< HEAD
-import com.felix.felixapis.payload.request.movie.MoviesRequest;
-import com.felix.felixapis.repository.movie.CategoryRepository;
-import com.felix.felixapis.repository.movie.GenreRepository;
-//=======
+
 import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
-//>>>>>>> 9a5e305bd207e9d4338ebbd766dd79a36d5ef4b9
+
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.services.MovieService;
 import com.felix.felixapis.services.SearchService;
-//<<<<<<< HEAD
-import org.springframework.beans.factory.annotation.Autowired;
-//=======
+
 import org.springframework.beans.factory.annotation.Value;
-//>>>>>>> 9a5e305bd207e9d4338ebbd766dd79a36d5ef4b9
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +27,11 @@ import java.util.UUID;
 
 @RestController
 public class MovieController {
-//<<<<<<< HEAD
-    @Autowired
-    CategoryRepository categoryRepository;
-    @Autowired
-    GenreRepository genreRepository;
-//=======
-//    @Value("${project.image}") original
+
+
     @Value(("/app/target/classes/static"))
     private String UPLOAD_DIR;
-//>>>>>>> 9a5e305bd207e9d4338ebbd766dd79a36d5ef4b9
+
     private final MoviesRepository moviesRepository;
 
     private final SearchService searchService;
