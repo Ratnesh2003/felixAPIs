@@ -20,7 +20,7 @@ public class NewAdminService {
     @Autowired
     GetDetailsFromUser getDetailsFromUser;
 
-    private Boolean checkAdmin(HttpServletRequest httpServletRequest) {
+    public Boolean checkAdmin(HttpServletRequest httpServletRequest) {
         long userId = getDetailsFromUser.getUserId(httpServletRequest);
         User user = userRepository.findUserById(userId);
         return Objects.equals(user.getRole(), "ADMIN");
