@@ -14,6 +14,7 @@ public class AddCategoryModel {
     private String categoryType;
 
 
+
     public AddCategoryModel(String categoryType) {
         this.categoryType = categoryType;
 

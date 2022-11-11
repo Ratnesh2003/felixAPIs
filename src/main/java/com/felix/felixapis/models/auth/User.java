@@ -1,10 +1,10 @@
 package com.felix.felixapis.models.auth;
 
-<<<<<<< HEAD
-import com.felix.felixapis.models.WatchedHistory;
-=======
+//<<<<<<< HEAD
+//import com.felix.felixapis.models.WatchedHistory;
+//=======
 import com.felix.felixapis.models.movie.WatchedHistory;
->>>>>>> 9a5e305bd207e9d4338ebbd766dd79a36d5ef4b9
+//>>>>>>> 9a5e305bd207e9d4338ebbd766dd79a36d5ef4b9
 
 import javax.persistence.*;
 import java.util.List;

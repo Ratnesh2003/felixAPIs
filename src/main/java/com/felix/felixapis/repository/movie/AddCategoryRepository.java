@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface AddCategoryRepository extends JpaRepository<AddCategoryModel, Long> {
-    AddCategoryModel findAddCategoryModelByCategoryType(String categoryType) ;
+    AddCategoryModel findAddCategoryModelByCategoryTypeIgnoreCase(String categoryType) ;
+
+    @Override
+    List<AddCategoryModel> findAll();
 }

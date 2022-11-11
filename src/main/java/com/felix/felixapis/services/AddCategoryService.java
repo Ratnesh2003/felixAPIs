@@ -8,19 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class AddCategoryService {
 
     @Autowired
     AddCategoryRepository addCategoryRepository;
-//    final AddCategoryModel addCategoryModel;
-//
-//    public AddCategoryService(AddCategoryModel addCategoryModel) {
-//        this.addCategoryModel = addCategoryModel;
-//    }
 
     public ResponseEntity<?>  addCategory(String categoryType){
-      if(addCategoryRepository.findAddCategoryModelByCategoryType(categoryType)!=null) {
+      if(addCategoryRepository.findAddCategoryModelByCategoryTypeIgnoreCase(categoryType)!=null) {
           return ResponseEntity.status(HttpStatus.CONFLICT).body("Category Already Exist");
       }
       else
@@ -29,5 +25,9 @@ public class AddCategoryService {
           addCategoryRepository.save(newCategory);
           return ResponseEntity.status(HttpStatus.OK).body("Added new category");
       }
+    }
+    public List<AddCategoryModel> getAllCategories(){
+    List<AddCategoryModel> allCategories=addCategoryRepository.findAll();
+    return  allCategories;
     }
 }
