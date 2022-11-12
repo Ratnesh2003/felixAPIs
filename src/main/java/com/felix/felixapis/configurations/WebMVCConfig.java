@@ -12,6 +12,6 @@ public class WebMVCConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/stream-movie/**")
                 .addResourceLocations("file:/app/target/classes/static/");//working for heroku
-//        .addResourceLocations("file:\\"+ System.getProperty("user.dir") +"\\src\\main\\resources\\static\\"); original
+//        .addResourceLocations("file:\\"+ System.getProperty("user.dir") +"\\src\\main\\resources\\static\\"); //original
     }
 }

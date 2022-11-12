@@ -28,7 +28,6 @@ import java.util.UUID;
 @RestController
 public class MovieController {
 
-    //    @Value("${project.image}") //original
     @Value(("/app/target/classes/static"))
     private String UPLOAD_DIR;
 

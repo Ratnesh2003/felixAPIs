@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 @Component
 public class FileUploadHelper {
-//    @Value("${project.image}") local
+//    @Value("${project.image}")// local
     @Value(("/app/target/classes/static/"))
     private String UPLOAD_DIR;
 
