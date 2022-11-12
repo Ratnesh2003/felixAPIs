@@ -7,7 +7,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WatchedHistoryRepository extends JpaRepository<WatchedHistory,Long> {
 
-    String deleteByWatchedMovieIdAndUserId(long watchedMovieId, long userId);
+    void deleteByWatchedMovieIdAndUserId(long watchedMovieId, long userId);
 
-    String deleteAllByUserId(long userId);
+    void deleteAllByUserId(long userId);
+
+    boolean existsByWatchedMovieIdAndUserId(long movieId, long userId);
+
+
 }
