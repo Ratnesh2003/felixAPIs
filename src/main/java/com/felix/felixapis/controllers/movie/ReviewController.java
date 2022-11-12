@@ -3,7 +3,6 @@ package com.felix.felixapis.controllers.movie;
 import com.felix.felixapis.payload.request.movie.ReviewRequest;
 import com.felix.felixapis.payload.response.ReviewResponse;
 import com.felix.felixapis.services.movie.ReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -65,24 +65,29 @@ public class ReviewService {
     }
 
     public ResponseEntity<List<ReviewResponse>> getFeedback(long movieId, HttpServletRequest httpRequest) {
-        long userId = getDetailsFromUser.getUserId(httpRequest);
-        Reviews userReview = reviewRepository.findByMovieIdAndUserId(movieId, userId);
-        List<Reviews> reviews = reviewRepository.findByMovieIdAndUserIdNot(movieId, userId);
-        reviews.add(0, userReview);
 
-        List<ReviewResponse> reviewResponses = new ArrayList<>();
+        if (checkNullFeedback(movieId)) {
+            long userId = getDetailsFromUser.getUserId(httpRequest);
+            Reviews userReview = reviewRepository.findByMovieIdAndUserId(movieId, userId);
+            List<Reviews> reviews = reviewRepository.findByMovieIdAndUserIdNot(movieId, userId);
+            reviews.add(0, userReview);
 
-        for (Reviews review : reviews) {
-            ReviewResponse response = new ReviewResponse(
-                    review.getFullName(),
-                    review.getRole(),
-                    review.getReviewText(),
-                    review.getRating(),
-                    review.getDateAdded()
-            );
-            reviewResponses.add(response);
+            List<ReviewResponse> reviewResponses = new ArrayList<>();
+
+            for (Reviews review : reviews) {
+                ReviewResponse response = new ReviewResponse(
+                        review.getFullName(),
+                        review.getRole(),
+                        review.getReviewText(),
+                        review.getRating(),
+                        review.getDateAdded()
+                );
+                reviewResponses.add(response);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(reviewResponses);
+        } else {
+            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body(null);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(reviewResponses);
     }
 
     public Boolean checkFeedbackExistence(long movieId, HttpServletRequest httpRequest) {
@@ -92,6 +97,10 @@ public class ReviewService {
 
     public Boolean checkMovieExistence(long movieId) {
         return moviesRepository.existsById(movieId);
+    }
+
+    public Boolean checkNullFeedback(long movieId) {
+        return reviewRepository.existsByMovieId(movieId);
     }
 
 }
