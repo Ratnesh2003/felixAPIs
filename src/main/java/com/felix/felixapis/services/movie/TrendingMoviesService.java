@@ -46,8 +46,7 @@ public class TrendingMoviesService {
             trendingMovies.add(moviesRepository.findMovieById((long)movie[0]));
         }
 
-        List<Movie> firstSixTrendingMovies = trendingMovies.stream().limit(6).collect(Collectors.toList());
+        return trendingMovies.stream().limit(6).collect(Collectors.toList());
 
-        return firstSixTrendingMovies;
     }
 }

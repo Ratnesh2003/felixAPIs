@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class MovieController {
@@ -57,10 +59,10 @@ public class MovieController {
         if(file.isEmpty() || video.isEmpty()) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("File cannot be empty");
         }
-        if(!(file.getContentType().equals("image/jpeg") || file.getContentType().equals("image/png"))) {
+        if(!(Objects.equals(file.getContentType(), "image/jpeg") || Objects.equals(file.getContentType(), "image/png"))) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Image format must be JPEG only");
         }
-        if(!video.getContentType().equals("video/mp4")) {
+        if(!Objects.equals(video.getContentType(), "video/mp4")) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("Incorrect video format");
         }
 
@@ -89,9 +91,16 @@ public class MovieController {
     @GetMapping(value = "/api/home/movies-by-category")
     public ResponseEntity<List<MoviesWithCategoryResponse>> getHomeMovies(@RequestParam String category, HttpServletRequest request) {
 
-        List<Movie> moviesByCategory = moviesRepository.findAllMoviesWhereCategory(category);
+        List<Movie> moviesByCategory = moviesRepository.findAllMoviesWhereCategory(category.toLowerCase());
 
         return imageIDFromMovie.getImageAndIdFromMovieModel(moviesByCategory, request);
+    }
+
+    @GetMapping(value = "/api/home/limited-movies-by-category")
+    public ResponseEntity<List<MoviesWithCategoryResponse>> getLimitedHomeMovies(@RequestParam String category, HttpServletRequest request) {
+        List<Movie> moviesByCategory = moviesRepository.findAllMoviesWhereCategory(category.toLowerCase());
+        List<Movie> limitedMoviesByCategory = moviesByCategory.stream().limit(5).collect(Collectors.toList());
+        return imageIDFromMovie.getImageAndIdFromMovieModel(limitedMoviesByCategory, request);
     }
 
     @GetMapping("/api/home/trending")
@@ -105,7 +114,6 @@ public class MovieController {
         List<Movie> result = searchService.searchUsingMovieName(searchText);
         if(!result.isEmpty()) {
             return imageIDFromMovie.getImageIdNameFromMovieModel(result, httpRequest);
-//            return result;
         } else {
             return imageIDFromMovie.getImageIdNameFromMovieModel(searchService.searchUsingGenreName(searchText.toUpperCase()), httpRequest);
         }

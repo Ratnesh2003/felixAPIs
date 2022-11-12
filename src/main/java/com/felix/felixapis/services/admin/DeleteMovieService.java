@@ -4,7 +4,6 @@ import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +21,24 @@ public class DeleteMovieService {
     @Value(("/app/target/classes/static/"))
     private String UPLOAD_DIR;
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     GetDetailsFromUser getDetailsFromUser;
 
-    @Autowired
+    final
     NewAdminService newAdminService;
 
-    @Autowired
+    final
     MoviesRepository moviesRepository;
+
+    public DeleteMovieService(UserRepository userRepository, GetDetailsFromUser getDetailsFromUser, NewAdminService newAdminService, MoviesRepository moviesRepository) {
+        this.userRepository = userRepository;
+        this.getDetailsFromUser = getDetailsFromUser;
+        this.newAdminService = newAdminService;
+        this.moviesRepository = moviesRepository;
+    }
 
     public ResponseEntity<?> deleteMovie(long movieId, HttpServletRequest httpRequest) throws IOException {
         if (newAdminService.checkAdmin(httpRequest)) {

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface MoviesRepository extends JpaRepository<Movie, Integer> {
 
-    @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"movie_year\", \"movie_restriction\", \"movie_length\", \"cover_image_serving_path\", \"cover_image_path\", \"stream_movie_name\", \"stream_movie_path\", \"upload_date\", \"likes_count\" from \"felix_movies\", \"category\" where \"category_name\" like ?1 and \"movie_id\" = \"id\"", nativeQuery = true)
+    @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"movie_year\", \"movie_restriction\", \"movie_length\", \"cover_image_serving_path\", \"cover_image_path\", \"stream_movie_name\", \"stream_movie_path\", \"upload_date\", \"likes_count\" from \"felix_movies\", \"category\" where lower(\"category_name\") like ?1 and \"movie_id\" = \"id\"", nativeQuery = true)
     List<Movie> findAllMoviesWhereCategory(String category);
 
     @Query(value = "select \"id\", \"movie_name\", \"movie_description\", \"movie_cast\", \"movie_year\", \"movie_restriction\", \"movie_length\", \"cover_image_serving_path\", \"cover_image_path\", \"stream_movie_name\", \"stream_movie_path\", \"upload_date\", \"likes_count\" from \"felix_movies\", \"watched_history\" where \"user_id\" = ?1 and \"watched_movie_id\" = \"id\"", nativeQuery = true)
