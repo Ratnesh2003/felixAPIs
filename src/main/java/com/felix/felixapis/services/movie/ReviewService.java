@@ -52,7 +52,7 @@ public class ReviewService {
 
     public ResponseEntity<List<ReviewResponse>> getFeedback(long movieId, HttpServletRequest httpRequest) {
         long userId = getDetailsFromUser.getUserId(httpRequest);
-        Reviews userReview = reviewRepository.findByUserId(userId);
+        Reviews userReview = reviewRepository.findByMovieIdAndUserId(movieId, userId);
         List<Reviews> reviews = reviewRepository.findByMovieIdAndUserIdNot(movieId, userId);
         reviews.add(0, userReview);
 
