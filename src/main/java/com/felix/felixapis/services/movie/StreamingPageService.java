@@ -1,9 +1,12 @@
-package com.felix.felixapis.services;
+package com.felix.felixapis.services.movie;
 
+import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.movie.Genre;
+import com.felix.felixapis.models.movie.LikedMovies;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.payload.response.MovieResponse;
 import com.felix.felixapis.repository.auth.UserRepository;
+import com.felix.felixapis.repository.movie.LikedRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,12 @@ public class StreamingPageService {
     @Autowired
     MoviesRepository moviesRepository;
 
+    @Autowired
+    GetDetailsFromUser getDetailsFromUser;
+
+    @Autowired
+    LikedRepository likedRepository;
+
     public ResponseEntity<MovieResponse> getStreamingPageDetails(Movie movieDetails, List<Genre> genres, HttpServletRequest httpRequest) {
         String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
         String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movieDetails.getCoverImagePath();
@@ -34,15 +43,22 @@ public class StreamingPageService {
         String movieURL = baseURL + "/stream-movie/" + movieDetails.getStreamMovieName();
         movieDetails.setStreamMoviePath(movieURL);
 
+        long userId = getDetailsFromUser.getUserId(httpRequest);
+
         // Get wishlist and check whether already present or not
         Boolean addedToWishlist = false;
-        String requestTokenHeader = httpRequest.getHeader("Authorization");
-        String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
-        long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
         List<Movie> wishlist = moviesRepository.findWishlistWhereUserId(userId);
+
+        // Get LikedMovies and check whether liked or not
+        Boolean liked = false;
+        List<Movie> likedMovies = moviesRepository.findLikedMoviesWhereUserId(userId);
 
         if (wishlist.contains(movieDetails)) {
             addedToWishlist = true;
+        }
+
+        if (likedMovies.contains(movieDetails)) {
+            liked = true;
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MovieResponse(
@@ -56,7 +72,8 @@ public class StreamingPageService {
                 movieDetails.getGenres(),
                 movieDetails.getCoverImageServingPath(),
                 movieDetails.getStreamMoviePath(),
-                addedToWishlist
+                addedToWishlist,
+                liked
         ));
 
     }

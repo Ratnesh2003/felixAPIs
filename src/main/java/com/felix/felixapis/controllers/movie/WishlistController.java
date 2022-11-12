@@ -12,14 +12,14 @@ import com.felix.felixapis.repository.movie.WishlistRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
+@Transactional
 public class WishlistController {
     final
     GetDetailsFromUser getDetailsFromUser;
@@ -39,8 +39,6 @@ public class WishlistController {
     final
     ImageIDFromMovie imageIDFromMovie;
 
-
-
     public WishlistController(GetDetailsFromUser getDetailsFromUser, JwtUtil jwtUtil, UserRepository userRepository, WishlistRepository wishlistRepository, MoviesRepository moviesRepository, ImageIDFromMovie imageIDFromMovie) {
         this.getDetailsFromUser = getDetailsFromUser;
         this.jwtUtil = jwtUtil;
@@ -58,12 +56,16 @@ public class WishlistController {
         return ResponseEntity.status(HttpStatus.OK).body("Added to your wishlist");
     }
 
+    @DeleteMapping("/api/home/remove-from-wishlist")
+    public ResponseEntity<?> removeFromWishlist(@RequestParam long movieId, HttpServletRequest httpRequest) {
+        long userId = getDetailsFromUser.getUserId(httpRequest);
+        wishlistRepository.deleteByMovieIdAndUserId(movieId, userId);
+        return ResponseEntity.status(HttpStatus.OK).body("Removed from wishlist");
+    }
+
     @GetMapping("/api/home/wishlist")
     public ResponseEntity<List<MoviesWithCategoryResponse>> getWishlist(HttpServletRequest httpRequest) {
-
-        String requestTokenHeader = httpRequest.getHeader("Authorization");
-        String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
-        long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
+        long userId = getDetailsFromUser.getUserId(httpRequest);
         List<Movie> wishlist = moviesRepository.findWishlistWhereUserId(userId);
         return imageIDFromMovie.getImageAndIdFromMovieModel(wishlist, httpRequest);
     }

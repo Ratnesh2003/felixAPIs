@@ -1,4 +1,4 @@
-package com.felix.felixapis.services;
+package com.felix.felixapis.services.auth;
 
 import com.felix.felixapis.payload.response.UserInfoResponse;
 import com.felix.felixapis.repository.auth.UserRepository;

@@ -6,6 +6,7 @@ package com.felix.felixapis.models.movie;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -13,19 +14,13 @@ import java.util.List;
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name="movie_id")
     private Long id;
 
-
-    @NotNull
-    @Size(max = 40)
     private String movieName;
 
     private String movieDescription;
 
     private String movieCast;
-
-//    private String movieWriters;
 
     private int movieYear;
 
@@ -48,6 +43,10 @@ public class Movie {
     private String streamMovieName;
 
     private String streamMoviePath;
+
+    private int likesCount = 0;
+
+    private Date uploadDate = new Date();
 
     public Movie() {
     }
@@ -175,5 +174,21 @@ public class Movie {
 
     public void setStreamMoviePath(String streamMoviePath) {
         this.streamMoviePath = streamMoviePath;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public Date getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Date uploadDate) {
+        this.uploadDate = uploadDate;
     }
 }

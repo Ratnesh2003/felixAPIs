@@ -1,4 +1,4 @@
-package com.felix.felixapis.services;
+package com.felix.felixapis.services.movie;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.felix.felixapis.models.movie.Movie;
