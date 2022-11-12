@@ -5,6 +5,7 @@ import com.felix.felixapis.repository.movie.MoviesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TrendingMoviesService {
@@ -45,6 +46,8 @@ public class TrendingMoviesService {
             trendingMovies.add(moviesRepository.findMovieById((long)movie[0]));
         }
 
-        return trendingMovies;
+        List<Movie> firstSixTrendingMovies = trendingMovies.stream().limit(6).collect(Collectors.toList());
+
+        return firstSixTrendingMovies;
     }
 }
