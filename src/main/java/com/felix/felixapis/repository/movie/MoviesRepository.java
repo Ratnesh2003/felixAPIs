@@ -30,6 +30,8 @@ public interface MoviesRepository extends JpaRepository<Movie, Integer> {
 
     Movie findMovieById(Long movieId);
 
+    Boolean existsById(long movieId);
+
     @Query(value = "select \"genre_name\" from \"genre\" where \"movie_id\" = ?1 ", nativeQuery = true)
     List<Genre> findGenreNamesFromMovieId(Long movieId);
 

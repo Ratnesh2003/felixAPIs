@@ -2145,3 +2145,16 @@ delete from "felix_movies" where "movie_id" = 11 [42122-214]
 2022-11-11 12:43:02 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "felix_user" not found; SQL statement:
 update "felix_user" set "role" = 'USER' where "id" = 4 [42102-214]
+2022-11-12 14:55:38 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM ""reviews""\000d\000a[*]select * from ""felix_movies"""; SQL statement:
+SELECT * FROM "reviews"
+select * from "felix_movies" [42000-214]
+2022-11-12 14:55:38 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete from [*]""felix_"; SQL statement:
+delete from "felix_ [42000-214]
+2022-11-12 14:55:42 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete from [*]""felix_"; SQL statement:
+delete from "felix_ [42000-214]
+2022-11-12 14:56:22 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "delete [*]* from ""reviews"" where ""review_id"" = 111"; expected "identifier"; SQL statement:
+delete * from "reviews" where "review_id" = 111 [42001-214]

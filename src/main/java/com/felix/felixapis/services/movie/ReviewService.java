@@ -6,6 +6,7 @@ import com.felix.felixapis.models.movie.Reviews;
 import com.felix.felixapis.payload.request.movie.ReviewRequest;
 import com.felix.felixapis.payload.response.ReviewResponse;
 import com.felix.felixapis.repository.auth.UserRepository;
+import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.repository.movie.ReviewRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,26 +29,39 @@ public class ReviewService {
     final
     UserRepository userRepository;
 
-    public ReviewService(GetDetailsFromUser getDetailsFromUser, ReviewRepository reviewRepository, UserRepository userRepository) {
+    final MoviesRepository moviesRepository;
+
+    public ReviewService(GetDetailsFromUser getDetailsFromUser, ReviewRepository reviewRepository, UserRepository userRepository, MoviesRepository moviesRepository) {
         this.getDetailsFromUser = getDetailsFromUser;
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
+        this.moviesRepository = moviesRepository;
     }
 
     public ResponseEntity<?> addFeedback(ReviewRequest reviewRequest, HttpServletRequest httpRequest) {
         long userId = getDetailsFromUser.getUserId(httpRequest);
-        User user = userRepository.findUserById(userId);
-        Reviews newReview = new Reviews(
-                reviewRequest.getRating(),
-                reviewRequest.getReviewText(),
-                reviewRequest.getMovieId(),
-                userId,
-                new Date(),
-                user.getFirstName() + " " + user.getLastName(),
-                user.getRole()
-        );
-        reviewRepository.save(newReview);
-        return ResponseEntity.status(HttpStatus.OK).body("Review added.");
+
+        if (checkMovieExistence(reviewRequest.getMovieId())) {
+            if (checkFeedbackExistence(reviewRequest.getMovieId(), httpRequest)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("You have already added a feedback.");
+            } else {
+                User user = userRepository.findUserById(userId);
+                Reviews newReview = new Reviews(
+                        reviewRequest.getRating(),
+                        reviewRequest.getReviewText(),
+                        reviewRequest.getMovieId(),
+                        userId,
+                        new Date(),
+                        user.getFirstName() + " " + user.getLastName(),
+                        user.getRole()
+                );
+                reviewRepository.save(newReview);
+                return ResponseEntity.status(HttpStatus.OK).body("Review added.");
+            }
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie not found");
+        }
     }
 
     public ResponseEntity<List<ReviewResponse>> getFeedback(long movieId, HttpServletRequest httpRequest) {
@@ -68,9 +82,16 @@ public class ReviewService {
             );
             reviewResponses.add(response);
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponses);
+    }
 
+    public Boolean checkFeedbackExistence(long movieId, HttpServletRequest httpRequest) {
+        long userId = getDetailsFromUser.getUserId(httpRequest);
+        return reviewRepository.existsByMovieIdAndUserId(movieId, userId);
+    }
+
+    public Boolean checkMovieExistence(long movieId) {
+        return moviesRepository.existsById(movieId);
     }
 
 }
