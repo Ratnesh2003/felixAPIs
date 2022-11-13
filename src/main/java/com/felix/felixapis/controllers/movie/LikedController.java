@@ -8,7 +8,6 @@ import com.felix.felixapis.repository.movie.LikedRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import com.felix.felixapis.services.movie.LikeUnlikeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,20 +21,28 @@ import javax.validation.constraints.NotNull;
 @Transactional
 public class LikedController {
 
-    @Autowired
+    final
     JwtUtil jwtUtil;
 
-    @Autowired
+    final
     GetDetailsFromUser getDetailsFromUser;
 
-    @Autowired
+    final
     LikedRepository likedRepository;
 
-    @Autowired
+    final
     MoviesRepository moviesRepository;
 
-    @Autowired
+    final
     LikeUnlikeService likeUnlikeService;
+
+    public LikedController(JwtUtil jwtUtil, GetDetailsFromUser getDetailsFromUser, LikedRepository likedRepository, MoviesRepository moviesRepository, LikeUnlikeService likeUnlikeService) {
+        this.jwtUtil = jwtUtil;
+        this.getDetailsFromUser = getDetailsFromUser;
+        this.likedRepository = likedRepository;
+        this.moviesRepository = moviesRepository;
+        this.likeUnlikeService = likeUnlikeService;
+    }
 
     @PostMapping("/api/home/add-to-liked")
     public ResponseEntity<?> addToLiked(@RequestBody WishlistRequest wishlistRequest, HttpServletRequest httpRequest) {

@@ -261,7 +261,7 @@ public class AuthController {
     }
 
     @PutMapping("/api/auth/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPassRequest resetPassRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPassRequest resetPassRequest, HttpServletRequest httpRequest) {
         return resetPasswordService.resetPassword(
                 resetPassRequest.getEmail(),
                 resetPassRequest.getOldPassword(),
