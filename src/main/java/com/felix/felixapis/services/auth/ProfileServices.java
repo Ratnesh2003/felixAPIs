@@ -27,15 +27,19 @@ public class ProfileServices {
                 userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole());
     }
     public ResponseEntity<?> changeUserProfile(String newFirstName, String newLastName, String newEmail,  String oldEmail){
-        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(oldEmail);
+//        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(oldEmail);
+        User userDetails= userRepository.findUserByEmailIgnoreCase(oldEmail);
        userDetails.setFirstName(newFirstName);
        userDetails.setLastName(newLastName);
-       userDetails.setEmail(newEmail);
-//           UserInfoResponse updateDetails = new UserInfoResponse(userDetails.getFirstName(),
-//                   userDetails.getLastName(),userDetails.getEmail());
+       if(newEmail!=null) {
+           userDetails.setEmail(newEmail);
+       }
+       else{
+           userDetails.setEmail(oldEmail);
+       }
+
 
          userRepository.save(userDetails);
-//
         return ResponseEntity.status(HttpStatus.OK).body("User Details Updated");
 
     }
