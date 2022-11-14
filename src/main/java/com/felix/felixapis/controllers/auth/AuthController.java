@@ -83,6 +83,11 @@ public class AuthController {
         if(userRepository.existsByEmailIgnoreCase(signupRequest.getEmail())) {
             UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(signupRequest.getEmail());
             if(!userDetails.isEnabled()) {
+                User user = userRepository.findByEmail(signupRequest.getEmail());
+                user.setFirstName(signupRequest.getFirstName());
+                user.setLastName(signupRequest.getLastName());
+                user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+                userRepository.save(user);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please verify your email first.");
             } else {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already in use");
@@ -156,10 +161,13 @@ public class AuthController {
 
         UserDetailsImpl userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
             try {
-                this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
+                if(userDetails.isEnabled()) {
+                    this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Please verify your email first");
+                }
             } catch (UsernameNotFoundException ex) {
-                ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
             }
         String jwtCookie = jwtUtil.generateToken(userDetails);
 
