@@ -142,17 +142,18 @@ public class AuthController {
     @RequestMapping(value = "/api/auth/confirm-account", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity confirmUserAccount(@RequestParam("token")String confirmationToken) {
         EmailConfirmationModel token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("The link is invalid");
+        }
+
         if(new Date().getTime() > token.getCreationDate().getTime() + 5*60*1000) {
             return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Verification link expired");
         } else {
-            if(token != null) {
-                User user = userRepository.findUserById(token.getUserId());
-                user.setEnabled(true);
-                userRepository.save(user);
-                return ResponseEntity.status(HttpStatus.OK).body("Account verified");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("The link is invalid");
-            }
+            User user = userRepository.findUserById(token.getUserId());
+            user.setEnabled(true);
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body("Account verified");
+
         }
     }
 
