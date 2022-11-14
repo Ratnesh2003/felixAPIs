@@ -4,10 +4,12 @@ import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.movie.Genre;
 import com.felix.felixapis.models.movie.LikedMovies;
 import com.felix.felixapis.models.movie.Movie;
+import com.felix.felixapis.models.movie.Reviews;
 import com.felix.felixapis.payload.response.MovieResponse;
 import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.repository.movie.LikedRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
+import com.felix.felixapis.repository.movie.ReviewRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,10 @@ public class StreamingPageService {
     @Autowired
     LikedRepository likedRepository;
 
-    public ResponseEntity<MovieResponse> getStreamingPageDetails(Movie movieDetails, List<Genre> genres, HttpServletRequest httpRequest) {
+    @Autowired
+    ReviewRepository reviewRepository;
+
+    public ResponseEntity<MovieResponse> getStreamingPageDetails(Movie movieDetails, HttpServletRequest httpRequest) {
         String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
         String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movieDetails.getCoverImagePath();
         movieDetails.setCoverImageServingPath(coverImageURL);
@@ -61,6 +66,12 @@ public class StreamingPageService {
             liked = true;
         }
 
+        float movieRating = getRatingOfMovie(movieDetails.getId());
+
+        int totalReviews = reviewRepository.countByMovieId(movieDetails.getId());
+
+
+
         return ResponseEntity.status(HttpStatus.OK).body(new MovieResponse(
                 movieDetails.getId(),
                 movieDetails.getMovieName(),
@@ -73,8 +84,25 @@ public class StreamingPageService {
                 movieDetails.getCoverImageServingPath(),
                 movieDetails.getStreamMoviePath(),
                 addedToWishlist,
-                liked
+                liked,
+                String.format("%.1f", movieRating),
+                totalReviews
         ));
+
+    }
+
+
+    public float getRatingOfMovie(long movieId) {
+        List<Reviews> movieReview = reviewRepository.findAllByMovieId(movieId);
+        float rating = 0;
+        for (Reviews review : movieReview) {
+            rating += review.getRating();
+        }
+
+//        rating = Math.round(rating / movieReview.size());
+
+        rating /= movieReview.size();
+        return rating;
 
     }
 }

@@ -12,4 +12,10 @@ public interface ReviewRepository extends JpaRepository<Reviews, Long> {
     Boolean existsByMovieIdAndUserId(long movieId, long userId);
 
     Boolean existsByMovieId(long movieId);
+
+    List<Reviews> findAllByMovieId(long movieId);
+
+    int countByMovieId(long movieId);
+
+    void deleteByMovieIdAndUserId(long movieId, long userId);
 }

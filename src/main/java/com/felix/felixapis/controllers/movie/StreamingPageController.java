@@ -32,7 +32,7 @@ public class StreamingPageController {
     @GetMapping("/api/media-streaming")
     public ResponseEntity<MovieResponse> getAllDetailsOfMovie(@RequestParam long movieId, HttpServletRequest httpRequest) {
         Movie movieDetails = moviesRepository.findMovieById(movieId);
-        List<Genre> genres = moviesRepository.findGenreNamesFromMovieId(movieId);
-        return streamingPageService.getStreamingPageDetails(movieDetails, genres, httpRequest);
+//        List<Genre> genres = moviesRepository.findGenreNamesFromMovieId(movieId);
+        return streamingPageService.getStreamingPageDetails(movieDetails, httpRequest);
     }
 }
