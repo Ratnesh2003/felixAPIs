@@ -108,9 +108,13 @@ public class AuthController {
         emailServices.sendMessageWithAttachment("innitt090@gmail.com",
                 user.getEmail(),
                 "Email Verification Felix",
-                "To verify your account, please click the following link: \n" +
-                "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
-                "\"> Activate now</a>");
+                "Hello " + user.getFirstName() + " " + user.getLastName() + ",<br><br> You registered an account on Felix, " +
+                        "before being able to use your account you need to verify that this is your email address by clicking " +
+                        "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+                        "\">here</a>" + ".<br><br>Kind Regards, Felix");
+//                "To verify your account, please click the following link: \n" +
+//                "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+//                "\"> Activate now</a>");
         return ResponseEntity.status(HttpStatus.OK).body("Please check your email for verification");
     }
 
@@ -129,9 +133,14 @@ public class AuthController {
             emailServices.sendMessageWithAttachment("innitt090@gmail.com",
                     user.getEmail(),
                     "Email Verification Felix",
-                    "To verify your account, please click the following link: \n" +
+
+                    "Hello " + user.getFirstName() + ",<br><br> You registered an account on Felix, " +
+                            "before being able to use your account you need to verify that this is your email address by clicking " +
                             "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
-                            "\"> Activate now</a>");
+                            "\">here</a>" + ".<br><br>Kind Regards, Felix");
+//                    "To verify your account, please click the following link: \n" +
+//                            "<a href=\""+ baseURL + "/api/auth/confirm-account?token=" + emailConfirmationModel.getConfirmationToken() +
+//                            "\"> Activate now</a>");
 
             return ResponseEntity.status(HttpStatus.OK).body("Verification link sent to the given Email");
         } else {
