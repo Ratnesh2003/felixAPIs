@@ -16,6 +16,23 @@ public class UserInfoResponse {
 
     }
 
+
+    public UserInfoResponse(String firstName, String lastName,String email)
+    {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+//    public UserInfoResponse(String setFirstName, String setLastName, String setEmail) {
+//    }
+
+//    public UserInfoResponse(void setFirstName, void setLastName, void setEmail) {
+//    }
+
+//    public UserInfoResponse(String setFirstName, String setLastName, String setEmail) {
+//    }
+
     public Long getId() {
         return id;
     }

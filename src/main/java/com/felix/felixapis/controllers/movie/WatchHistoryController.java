@@ -44,7 +44,7 @@ public class WatchHistoryController {
         String email = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
         long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
         WatchedHistory WatchedMovie = new WatchedHistory(userId, watchedHistoryRequest.getMovieId());
-        watchedHistoryRepository.save(WatchedMovie);
+
         return ResponseEntity.status(HttpStatus.OK).body("Added to watch history");
     }
 
@@ -56,7 +56,7 @@ public class WatchHistoryController {
         long userId = userRepository.findUserByEmailIgnoreCase(email).getId();
         List<Movie> watchHistory = moviesRepository.findWatchedHistoryWhereUserId(userId);
         return imageIDFromMovie.getImageAndIdFromMovieModel(watchHistory, httpRequest);
-}
+     }
     @Transactional
     @DeleteMapping("/api/history/clear")
     public ResponseEntity<?> deleteWatchedMovie(HttpServletRequest httpRequest) {
