@@ -57,6 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/home/get-movie-cover/**").permitAll()
                 .antMatchers("/stream-movie/**").permitAll()
+                .antMatchers("/v3/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
