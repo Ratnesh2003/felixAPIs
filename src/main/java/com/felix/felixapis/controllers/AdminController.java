@@ -59,7 +59,7 @@ public class AdminController {
     }
 
     @PostMapping("/api/admin/send-notification")
-    public ResponseEntity<?> sendNotification(NotificationRequest notificationRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> sendNotification(@RequestBody NotificationRequest notificationRequest, HttpServletRequest httpRequest) {
         return notificationService.sendNotification(notificationRequest, httpRequest);
     }
 
