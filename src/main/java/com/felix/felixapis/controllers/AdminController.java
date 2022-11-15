@@ -2,6 +2,7 @@ package com.felix.felixapis.controllers;
 
 import com.felix.felixapis.models.auth.User;
 import com.felix.felixapis.models.movie.AllCategory;
+import com.felix.felixapis.payload.request.NotificationRequest;
 import com.felix.felixapis.payload.request.auth.ConfirmOTPRequest;
 import com.felix.felixapis.payload.request.movie.AllCategoryRequest;
 import com.felix.felixapis.payload.request.movie.MoviesRequest;
@@ -9,6 +10,7 @@ import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.services.admin.AllCategoryService;
 import com.felix.felixapis.services.admin.DeleteMovieService;
 import com.felix.felixapis.services.admin.NewAdminService;
+import com.felix.felixapis.services.admin.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,9 @@ public class AdminController {
     @Autowired
     AllCategoryService allCategoryService;
 
+    @Autowired
+    NotificationService notificationService;
+
     @PutMapping("/api/admin/make-new-admin")
     public ResponseEntity<?> makeNewAdmin(@RequestBody ConfirmOTPRequest emailObject, HttpServletRequest httpRequest) {
         return newAdminService.makeNewAdmin(emailObject.getEmail(), httpRequest);
@@ -51,6 +56,11 @@ public class AdminController {
     @GetMapping("/api/home/get-all-categories")
     public ResponseEntity<List<AllCategory>> getAllCategories() {
         return allCategoryService.getAllCategory();
+    }
+
+    @PostMapping("/api/admin/send-notification")
+    public ResponseEntity<?> sendNotification(NotificationRequest notificationRequest, HttpServletRequest httpRequest) {
+        return notificationService.sendNotification(notificationRequest, httpRequest);
     }
 
 }
