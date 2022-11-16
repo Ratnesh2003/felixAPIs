@@ -31,12 +31,12 @@ public class ProfileServices {
         User userDetails= userRepository.findUserByEmailIgnoreCase(oldEmail);
        userDetails.setFirstName(newFirstName);
        userDetails.setLastName(newLastName);
-       if(newEmail!=null) {
-           userDetails.setEmail(newEmail);
-       }
-       else{
-           userDetails.setEmail(oldEmail);
-       }
+//       if(newEmail!=null) {
+//           userDetails.setEmail(newEmail);
+//       }
+//       else{
+//           userDetails.setEmail(oldEmail);
+//       }
 
 
          userRepository.save(userDetails);
