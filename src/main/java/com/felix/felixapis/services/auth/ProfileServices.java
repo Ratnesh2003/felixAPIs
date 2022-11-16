@@ -7,6 +7,8 @@ import com.felix.felixapis.security.jwt.JwtUtil;
 import com.felix.felixapis.security.services.UserDetailsImpl;
 import com.felix.felixapis.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -24,16 +26,10 @@ public class ProfileServices {
         return new UserInfoResponse(userDetails.getId(),
                 userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole());
     }
-    public 
+    public ResponseEntity<?> changeUserProfile(String newFirstName, String newLastName, String newEmail, String oldEmail){
     User userDetails= userRepository.findUserByEmailIgnoreCase(oldEmail);
        userDetails.setFirstName(newFirstName);
        userDetails.setLastName(newLastName);
-       if(newEmail!=null) {
-        userDetails.setEmail(newEmail);
-    }
-       else{
-        userDetails.setEmail(oldEmail);
-    }
 //       if(newEmail!=null) {
 //           userDetails.setEmail(newEmail);
 //       }
@@ -43,4 +39,26 @@ public class ProfileServices {
 
 
          userRepository.save(userDetails);
+        return ResponseEntity.status(HttpStatus.OK).body("User Details Updated");
+
+    }
 }
+
+//    public ResponseEntity<?> changeUserProfile(String newFirstName, String newLastName, String newEmail, String oldEmail){
+////        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(oldEmail);
+//        User userDetails= userRepository.findUserByEmailIgnoreCase(oldEmail);
+//        userDetails.setFirstName(newFirstName);
+//        userDetails.setLastName(newLastName);
+////       if(newEmail!=null) {
+////           userDetails.setEmail(newEmail);
+////       }
+////       else{
+////           userDetails.setEmail(oldEmail);
+////       }
+//
+//
+//        userRepository.save(userDetails);
+//        return ResponseEntity.status(HttpStatus.OK).body("User Details Updated");
+//
+//    }
+//}
