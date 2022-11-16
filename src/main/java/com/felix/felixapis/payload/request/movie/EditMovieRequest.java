@@ -3,14 +3,22 @@ package com.felix.felixapis.payload.request.movie;
 import com.felix.felixapis.models.movie.Category;
 import com.felix.felixapis.models.movie.Genre;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class EditMovieRequest {
+
+    @NotNull
     long movieId;
+    @NotNull
     String newMovieDescription;
+    @NotNull
     String newMovieName;
+    @NotNull
     int newMovieYear;
+    @NotNull
     List<Genre> newGenre;
+    @NotNull
     List<Category>newCategory;
 
 
