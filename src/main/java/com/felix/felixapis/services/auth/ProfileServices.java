@@ -1,5 +1,6 @@
 package com.felix.felixapis.services.auth;
 
+import com.felix.felixapis.models.auth.User;
 import com.felix.felixapis.payload.response.UserInfoResponse;
 import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
@@ -23,4 +24,23 @@ public class ProfileServices {
         return new UserInfoResponse(userDetails.getId(),
                 userDetails.getEmail(), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getRole());
     }
+    public 
+    User userDetails= userRepository.findUserByEmailIgnoreCase(oldEmail);
+       userDetails.setFirstName(newFirstName);
+       userDetails.setLastName(newLastName);
+       if(newEmail!=null) {
+        userDetails.setEmail(newEmail);
+    }
+       else{
+        userDetails.setEmail(oldEmail);
+    }
+//       if(newEmail!=null) {
+//           userDetails.setEmail(newEmail);
+//       }
+//       else{
+//           userDetails.setEmail(oldEmail);
+//       }
+
+
+         userRepository.save(userDetails);
 }
