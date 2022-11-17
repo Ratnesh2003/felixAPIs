@@ -14,11 +14,16 @@ import java.util.Objects;
 @Service
 public class NewAdminService {
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     GetDetailsFromUser getDetailsFromUser;
+
+    public NewAdminService(UserRepository userRepository, GetDetailsFromUser getDetailsFromUser) {
+        this.userRepository = userRepository;
+        this.getDetailsFromUser = getDetailsFromUser;
+    }
 
     public Boolean checkAdmin(HttpServletRequest httpServletRequest) {
         long userId = getDetailsFromUser.getUserId(httpServletRequest);
@@ -29,12 +34,16 @@ public class NewAdminService {
     public ResponseEntity<?> makeNewAdmin(String email, HttpServletRequest httpRequest) {
         if(checkAdmin(httpRequest)) {
             User user = userRepository.findUserByEmailIgnoreCase(email);
-            if (Objects.equals(user.getRole(), "ADMIN")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(user.getFirstName() + " " + user.getLastName() + " is already an ADMIN.");
+            if (user != null) {
+                if (Objects.equals(user.getRole(), "ADMIN")) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body(user.getFirstName() + " " + user.getLastName() + " is already an ADMIN.");
+                } else {
+                    user.setRole("ADMIN");
+                    userRepository.save(user);
+                    return ResponseEntity.status(HttpStatus.OK).body(user.getFirstName() + " " + user.getLastName() + " is now ADMIN.");
+                }
             } else {
-                user.setRole("ADMIN");
-                userRepository.save(user);
-                return ResponseEntity.status(HttpStatus.OK).body(user.getFirstName() + " " + user.getLastName() + " is now ADMIN.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You must be an ADMIN to perform this action.");

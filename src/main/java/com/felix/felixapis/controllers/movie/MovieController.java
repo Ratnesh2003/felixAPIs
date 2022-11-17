@@ -81,7 +81,7 @@ public class MovieController {
 
             Movie newMovie = movieService.getJson(moviesRequest, fileName, videoFileName);
             moviesRepository.save(newMovie);
-            return ResponseEntity.status(HttpStatus.OK).body("Movie uploaded successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Movie uploaded successfully");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
         }
