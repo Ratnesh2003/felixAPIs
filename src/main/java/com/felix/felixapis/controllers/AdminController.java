@@ -21,17 +21,24 @@ import java.util.List;
 @RestController
 public class AdminController {
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     NewAdminService newAdminService;
 
-    @Autowired
+    final
     DeleteMovieService deleteMovieService;
 
-    @Autowired
+    final
     AllCategoryService allCategoryService;
+
+    public AdminController(UserRepository userRepository, NewAdminService newAdminService, DeleteMovieService deleteMovieService, AllCategoryService allCategoryService) {
+        this.userRepository = userRepository;
+        this.newAdminService = newAdminService;
+        this.deleteMovieService = deleteMovieService;
+        this.allCategoryService = allCategoryService;
+    }
 
     @PutMapping("/api/admin/make-new-admin")
     public ResponseEntity<?> makeNewAdmin(@RequestBody ConfirmOTPRequest emailObject, HttpServletRequest httpRequest) {
