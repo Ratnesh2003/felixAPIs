@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class AuthTokenFilter extends OncePerRequestFilter {
+public class
+AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
