@@ -80,13 +80,20 @@ public class ReviewService {
 
 
             for (Reviews review : reviews) {
-                System.out.println(review.getDateAdded());
+                long differenceInMilli = new Date().getTime() - review.getDateAdded().getTime();
+                Date differenceInTime = new Date(differenceInMilli);
+
+                if (differenceInMilli / 1000 < 60) {
+                    
+                }
+
+                String timeAgo = calculateTimeAgoByTimeGranularity(review.getDateAdded(), TimeGranularity.HOURS);
                 ReviewResponse response = new ReviewResponse(
                         review.getFullName(),
                         review.getRole(),
                         review.getReviewText(),
                         review.getRating(),
-                        review.getDateAdded()
+                        timeAgo
                 );
                 reviewResponses.add(response);
             }
