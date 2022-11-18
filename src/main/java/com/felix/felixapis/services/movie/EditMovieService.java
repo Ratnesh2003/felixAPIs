@@ -3,6 +3,7 @@ package com.felix.felixapis.services.movie;
 import com.felix.felixapis.models.movie.Category;
 import com.felix.felixapis.models.movie.Genre;
 import com.felix.felixapis.models.movie.Movie;
+import com.felix.felixapis.payload.request.movie.EditMovieRequest;
 import com.felix.felixapis.payload.response.MovieResponse;
 import com.felix.felixapis.repository.movie.GenreRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
@@ -21,20 +22,20 @@ public class EditMovieService {
   GenreRepository genreRepository;
    public MovieResponse getMovieDetails(long movieId){
      Movie movieDetails = moviesRepository.findMovieById(movieId);
-     return new MovieResponse( movieId,movieDetails.getMovieName(),movieDetails.getMovieDescription(),
+     return new MovieResponse(movieDetails.getMovieName(),movieDetails.getMovieDescription(),
              movieDetails.getMovieYear(),
              movieDetails.getGenres());
    }
 
-  public ResponseEntity<?> editMovieService(String newMovieName, String newDescription, List<Genre> newGenre, int newMovieYear, Long movieId){
-    Movie movieDetails = moviesRepository.findMovieById(movieId);
-    movieDetails.setMovieName(newMovieName);
-    movieDetails.setMovieDescription(newDescription);
-    movieDetails.setMovieYear(newMovieYear);
-    List<Genre> oldGenre=movieDetails.getGenres();
-    if(newGenre!=oldGenre) {
+  public ResponseEntity<?> editMovie(EditMovieRequest editMovieRequest){
+    Movie movieDetails = moviesRepository.findMovieById(editMovieRequest.getMovieId());
+    movieDetails.setMovieName(editMovieRequest.getNewMovieName());
+    movieDetails.setMovieDescription(editMovieRequest.getNewMovieDescription());
+    movieDetails.setMovieYear(editMovieRequest.getNewMovieYear());
+    List<Genre> oldGenre = movieDetails.getGenres();
+    if(editMovieRequest.getNewGenre()!=oldGenre) {
       movieDetails.getGenres().clear();
-      movieDetails.setGenres(newGenre);
+      movieDetails.setGenres(editMovieRequest.getNewGenre());
     }
 //    if(newCategory!=null) {
 //      movieDetails.getCategories().clear();

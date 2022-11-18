@@ -130,7 +130,8 @@ public class MovieController {
     }
     @PutMapping("/api/home/edit-movie")
     public ResponseEntity<?> editMovie(@RequestBody EditMovieRequest editMovieRequest) {
-        return editMovieService.editMovieService(editMovieRequest.getNewMovieName(), editMovieRequest.getNewMovieDescription(),
-                editMovieRequest.getNewGenre(),editMovieRequest.getNewMovieYear(), editMovieRequest.getMovieId());
+//        return editMovieService.editMovieService(editMovieRequest.getNewMovieName(), editMovieRequest.getNewMovieDescription(),
+//                editMovieRequest.getNewGenre(),editMovieRequest.getNewMovieYear());
+        return editMovieService.editMovie(editMovieRequest);
     }
 }
