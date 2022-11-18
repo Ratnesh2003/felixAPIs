@@ -36,13 +36,13 @@ public class UserProfileController {
         return profileServices.changeUserProfile(changeProfileRequest.getNewFirstName(),changeProfileRequest.getNewLastName(),oldEmail);
 
     }
-    @GetMapping("/api/change-profile/send-email-verification/newEmail=?1")
+    @GetMapping("/api/change-profile/send-email-verification")
     public ResponseEntity<?> changeEmail(@RequestParam("newEmail") String newEmail,HttpServletRequest httpRequest) throws MessagingException {
 
         return profileServices.changeUserEmail(newEmail,httpRequest);
     }
-    @GetMapping("/api/change-profile/save-new-email")
-    public ResponseEntity<?> saveNewEmail(@RequestParam("newEmail")String newEmail,@RequestParam("token")String confirmationToken,HttpServletRequest httpRequest){
+    @RequestMapping(value="/api/change-profile/save-new-email", method = {RequestMethod.GET, RequestMethod.PUT})
+    public ResponseEntity<?> saveNewEmail(@RequestParam("token")String confirmationToken,@RequestParam("email")String newEmail , HttpServletRequest httpRequest){
         String requestTokenHeader = httpRequest.getHeader("Authorization");
         String oldEmail = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
         return profileServices.saveNewEmail(newEmail,oldEmail,confirmationToken);

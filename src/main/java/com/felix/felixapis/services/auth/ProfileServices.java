@@ -77,7 +77,7 @@ public class ProfileServices {
                     "Email Verification Felix",
                     "Hey! Click " + "<a href=\"" + baseURL + "/api/change-profile/save-new-email?token=" + emailConfirmationModel.getConfirmationToken()+
                             "/email="+ newEmail+
-                            "\">here</a>" + "to verify your new email");
+                            "\">here</a>" + " to verify your new email");
         return ResponseEntity.status(HttpStatus.OK).body("Verification link sent to the given Email");
     }
     public ResponseEntity<?> saveNewEmail(String newEmail,String oldEmail,String confirmationToken){
