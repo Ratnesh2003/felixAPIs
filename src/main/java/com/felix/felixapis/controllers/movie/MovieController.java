@@ -3,12 +3,16 @@ package com.felix.felixapis.controllers.movie;
 import com.felix.felixapis.helper.FileUploadHelper;
 import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.Movie;
+import com.felix.felixapis.payload.request.movie.EditMovieRequest;
+import com.felix.felixapis.payload.response.MovieResponse;
 import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
 import com.felix.felixapis.payload.response.SearchMovieResponse;
 import com.felix.felixapis.repository.movie.MoviesRepository;
+import com.felix.felixapis.services.movie.EditMovieService;
 import com.felix.felixapis.services.movie.MovieService;
 import com.felix.felixapis.services.movie.SearchService;
 import com.felix.felixapis.services.movie.TrendingMoviesService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +29,8 @@ import java.util.stream.Collectors;
 
 @RestController
 public class MovieController {
+    @Autowired
+    EditMovieService editMovieService;
 //    @Value("${project.image}") //original
     @Value(("/app/target/classes/static"))
     private String UPLOAD_DIR;
@@ -117,5 +123,15 @@ public class MovieController {
         } else {
             return imageIDFromMovie.getImageIdNameFromMovieModel(searchService.searchUsingGenreName(searchText.toUpperCase()), httpRequest);
         }
+    }
+    @GetMapping("/api/home/get-movie-details")
+    public MovieResponse getMovieDetails(@RequestParam long movieId){
+        return editMovieService.getMovieDetails(movieId);
+    }
+    @PutMapping("/api/home/edit-movie")
+    public ResponseEntity<?> editMovie(@RequestBody EditMovieRequest editMovieRequest) {
+//        return editMovieService.editMovieService(editMovieRequest.getNewMovieName(), editMovieRequest.getNewMovieDescription(),
+//                editMovieRequest.getNewGenre(),editMovieRequest.getNewMovieYear());
+        return editMovieService.editMovie(editMovieRequest);
     }
 }
