@@ -52,6 +52,13 @@ public class MovieResponse {
         this.rating = rating;
         this.totalReviews = totalReviews;
     }
+    public MovieResponse(Long id, String movieName, String movieDescription, int movieYear, List<Genre> genres) {
+        this.id = id;
+        this.movieName = movieName;
+        this.movieDescription = movieDescription;
+        this.movieYear = movieYear;
+        this.genres = genres;
+    }
 
     public Long getId() {
         return id;

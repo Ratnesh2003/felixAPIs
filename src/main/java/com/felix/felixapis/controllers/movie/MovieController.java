@@ -4,6 +4,7 @@ import com.felix.felixapis.helper.FileUploadHelper;
 import com.felix.felixapis.helper.ImageIDFromMovie;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.payload.request.movie.EditMovieRequest;
+import com.felix.felixapis.payload.response.MovieResponse;
 import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
 import com.felix.felixapis.payload.response.SearchMovieResponse;
 import com.felix.felixapis.repository.movie.MoviesRepository;
@@ -123,9 +124,13 @@ public class MovieController {
             return imageIDFromMovie.getImageIdNameFromMovieModel(searchService.searchUsingGenreName(searchText.toUpperCase()), httpRequest);
         }
     }
+    @GetMapping("/api/home/get-movie-details")
+    public MovieResponse getMovieDetails(@RequestParam long movieId){
+        return editMovieService.getMovieDetails(movieId);
+    }
     @PutMapping("/api/home/edit-movie")
     public ResponseEntity<?> editMovie(@RequestBody EditMovieRequest editMovieRequest) {
         return editMovieService.editMovieService(editMovieRequest.getNewMovieName(), editMovieRequest.getNewMovieDescription(),
-                editMovieRequest.getNewGenre(), editMovieRequest.getNewCategory(), editMovieRequest.getNewMovieYear(), editMovieRequest.getMovieId());
+                editMovieRequest.getNewGenre(),editMovieRequest.getNewMovieYear(), editMovieRequest.getMovieId());
     }
 }
