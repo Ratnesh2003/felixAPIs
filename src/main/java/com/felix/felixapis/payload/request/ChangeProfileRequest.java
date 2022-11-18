@@ -1,8 +1,15 @@
 package com.felix.felixapis.payload.request;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 public class ChangeProfileRequest {
+    @NotBlank
     private String newFirstName;
+    @NotBlank
     private String newLastName;
+    @NotBlank
+    @Email
     private String newEmail;
 
     public ChangeProfileRequest() {
