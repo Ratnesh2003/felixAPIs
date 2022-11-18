@@ -15,6 +15,8 @@ public class EditMovieRequest {
     String newMovieDescription;
     @NotBlank(message="Must not be null")
     String newMovieName;
+    @NotBlank(message = "Must not be blank")
+    String newMovieCast;
     @NotBlank(message="Must not be null")
     int newMovieYear;
     @NotBlank(message="Must not be null")
@@ -69,5 +71,13 @@ public class EditMovieRequest {
 
     public void setMovieId(long movieId) {
         this.movieId = movieId;
+    }
+
+    public String getNewMovieCast() {
+        return newMovieCast;
+    }
+
+    public void setNewMovieCast(String newMovieCast) {
+        this.newMovieCast = newMovieCast;
     }
 }

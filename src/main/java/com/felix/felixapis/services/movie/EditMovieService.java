@@ -32,15 +32,17 @@ public class EditMovieService {
     movieDetails.setMovieName(editMovieRequest.getNewMovieName());
     movieDetails.setMovieDescription(editMovieRequest.getNewMovieDescription());
     movieDetails.setMovieYear(editMovieRequest.getNewMovieYear());
+    movieDetails.setMovieCast(editMovieRequest.getNewMovieCast());
     List<Genre> oldGenre = movieDetails.getGenres();
+    List<Category> oldCategories = movieDetails.getCategories();
     if(editMovieRequest.getNewGenre()!=oldGenre) {
       movieDetails.getGenres().clear();
       movieDetails.setGenres(editMovieRequest.getNewGenre());
     }
-//    if(newCategory!=null) {
-//      movieDetails.getCategories().clear();
-//      movieDetails.setCategories(newCategory);
-//    }
+    if(editMovieRequest.getNewCategory()!=oldCategories) {
+      movieDetails.getCategories().clear();
+      movieDetails.setCategories(editMovieRequest.getNewCategory());
+    }
     moviesRepository.save(movieDetails);
     return ResponseEntity.status(HttpStatus.OK).body("Movie Details Updated Updated");
   }
