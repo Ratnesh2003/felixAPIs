@@ -29,4 +29,9 @@ public class ReviewController {
         return reviewService.getFeedback(movieId, httpRequest);
     }
 
+    @DeleteMapping("/api/movie/delete-feedback")
+    public ResponseEntity<?> deleteReview(@RequestParam long movieId,  HttpServletRequest httpRequest) {
+        return reviewService.deleteFeedback(movieId, httpRequest);
+    }
+
 }

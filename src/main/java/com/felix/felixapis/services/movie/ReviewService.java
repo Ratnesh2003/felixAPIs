@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,6 +102,23 @@ public class ReviewService {
 
     public Boolean checkNullFeedback(long movieId) {
         return reviewRepository.existsByMovieId(movieId);
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteFeedback(long movieId, HttpServletRequest httpRequest) {
+        if (checkMovieExistence(movieId)) {
+            if (checkFeedbackExistence(movieId, httpRequest)) {
+                long userId = getDetailsFromUser.getUserId(httpRequest);
+                reviewRepository.deleteByMovieIdAndUserId(movieId, userId);
+                return ResponseEntity.status(HttpStatus.OK).body("Review deleted");
+
+            } else {
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("User has not given any feedback yet");
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie not found");
+        }
     }
 
 }
