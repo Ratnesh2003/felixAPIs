@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 
 @RestController
 public class UserProfileController {
@@ -42,7 +43,7 @@ public class UserProfileController {
         return profileServices.changeUserEmail(newEmail,httpRequest);
     }
     @RequestMapping(value="/api/change-profile/save-new-email", method = {RequestMethod.GET, RequestMethod.PUT})
-    public ResponseEntity<?> saveNewEmail(@RequestParam("token")String confirmationToken,@RequestParam("email")String newEmail , HttpServletRequest httpRequest){
+    public ResponseEntity<?> saveNewEmail(@RequestParam("token") String confirmationToken, @RequestParam("email")String newEmail , HttpServletRequest httpRequest){
         String requestTokenHeader = httpRequest.getHeader("Authorization");
         String oldEmail = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
         return profileServices.saveNewEmail(newEmail,oldEmail,confirmationToken);
