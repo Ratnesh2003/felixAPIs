@@ -76,17 +76,17 @@ public class ProfileServices {
                     newEmail,
                     "Email Verification Felix",
                     "Hey! Click " + "<a href=\"" + baseURL + "/api/change-profile/save-new-email?token=" + emailConfirmationModel.getConfirmationToken()+
-                            "/email="+ newEmail+
+                            "&email="+ newEmail+
                             "\">here</a>" + " to verify your new email");
         return ResponseEntity.status(HttpStatus.OK).body("Verification link sent to the given Email");
     }
-    public ResponseEntity<?> saveNewEmail(String newEmail,String oldEmail,String confirmationToken){
+    public ResponseEntity<?> saveNewEmail(String newEmail, String confirmationToken){
         EmailConfirmationModel token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
         if(token==null){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("The link is invalid");
         }
         else{
-            User userDetails = userRepository.findUserByEmailIgnoreCase(oldEmail);
+            User userDetails = userRepository.findUserById(token.getUserId());
             userDetails.setEmail(newEmail);
             userRepository.save(userDetails);
             return ResponseEntity.status(HttpStatus.OK).body("Email Updated");

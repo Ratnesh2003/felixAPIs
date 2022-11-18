@@ -43,9 +43,10 @@ public class UserProfileController {
         return profileServices.changeUserEmail(newEmail,httpRequest);
     }
     @RequestMapping(value="/api/change-profile/save-new-email", method = {RequestMethod.GET, RequestMethod.PUT})
-    public ResponseEntity<?> saveNewEmail(@RequestParam("token") String confirmationToken, @RequestParam("email")String newEmail , HttpServletRequest httpRequest){
-        String requestTokenHeader = httpRequest.getHeader("Authorization");
-        String oldEmail = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
-        return profileServices.saveNewEmail(newEmail,oldEmail,confirmationToken);
+    public ResponseEntity<?> saveNewEmail(@RequestParam("token") String confirmationToken, @RequestParam("email")String newEmail ){
+        return profileServices.saveNewEmail(newEmail, confirmationToken);
+//        String requestTokenHeader = httpRequest.getHeader("Authorization");
+//        String oldEmail = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
+//        return profileServices.saveNewEmail(newEmail,oldEmail,confirmationToken);
     }
 }
