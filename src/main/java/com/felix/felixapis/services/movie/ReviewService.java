@@ -80,14 +80,30 @@ public class ReviewService {
 
 
             for (Reviews review : reviews) {
-                long differenceInMilli = new Date().getTime() - review.getDateAdded().getTime();
-                Date differenceInTime = new Date(differenceInMilli);
+                long differenceInSeconds = (new Date().getTime() - review.getDateAdded().getTime()) / 1000;
+//                Date differenceInTime = new Date(differenceInSeconds);
+                TimeGranularity timeFormat = TimeGranularity.SECONDS;
 
-                if (differenceInMilli / 1000 < 60) {
-                    
+                if (differenceInSeconds >= 60 && differenceInSeconds < 3600 ) {
+                    timeFormat = TimeGranularity.MINUTES;
+                }
+                if (differenceInSeconds >= 3600 && differenceInSeconds < 86400 ) {
+                    timeFormat = TimeGranularity.HOURS;
+                }
+                if (differenceInSeconds >= 86400 && differenceInSeconds < 2678400 ) {
+                    timeFormat = TimeGranularity.DAYS;
+                }
+                if (differenceInSeconds >= 2678400 && differenceInSeconds < 31536000 ) {
+                    timeFormat = TimeGranularity.MONTHS;
+                }
+                if (differenceInSeconds >= 31536000) {
+                    timeFormat = TimeGranularity.YEARS;
                 }
 
-                String timeAgo = calculateTimeAgoByTimeGranularity(review.getDateAdded(), TimeGranularity.HOURS);
+                String timeAgo = calculateTimeAgoByTimeGranularity(review.getDateAdded(), timeFormat);
+                if (timeAgo.startsWith("1 ")) {
+                    timeAgo = timeAgo.replace("s ago", " ago");
+                }
                 ReviewResponse response = new ReviewResponse(
                         review.getFullName(),
                         review.getRole(),
