@@ -41,6 +41,10 @@ public class StreamingPageService {
     @Autowired
     ReviewRepository reviewRepository;
 
+    @Autowired
+    ReviewService reviewService;
+
+
     public ResponseEntity<MovieResponse> getStreamingPageDetails(Movie movieDetails, HttpServletRequest httpRequest) {
         String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
         String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movieDetails.getCoverImagePath();
@@ -58,12 +62,18 @@ public class StreamingPageService {
         Boolean liked = false;
         List<Movie> likedMovies = moviesRepository.findLikedMoviesWhereUserId(userId);
 
+        Boolean reviewed = false;
+
         if (wishlist.contains(movieDetails)) {
             addedToWishlist = true;
         }
 
         if (likedMovies.contains(movieDetails)) {
             liked = true;
+        }
+
+        if (reviewService.checkFeedbackExistence(movieDetails.getId(), httpRequest)) {
+            reviewed = true;
         }
 
         float movieRating = getRatingOfMovie(movieDetails.getId());
@@ -86,7 +96,8 @@ public class StreamingPageService {
                 addedToWishlist,
                 liked,
                 String.format("%.1f", movieRating),
-                totalReviews
+                totalReviews,
+                reviewed
         ));
 
     }
