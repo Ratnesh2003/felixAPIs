@@ -1,5 +1,6 @@
 package com.felix.felixapis.services.movie;
 
+import com.felix.felixapis.TimeGranularity;
 import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.auth.User;
 import com.felix.felixapis.models.movie.Reviews;
@@ -39,6 +40,8 @@ public class ReviewService {
         this.moviesRepository = moviesRepository;
     }
 
+
+
     public ResponseEntity<?> addFeedback(ReviewRequest reviewRequest, HttpServletRequest httpRequest) {
         long userId = getDetailsFromUser.getUserId(httpRequest);
 
@@ -75,7 +78,9 @@ public class ReviewService {
 
             List<ReviewResponse> reviewResponses = new ArrayList<>();
 
+
             for (Reviews review : reviews) {
+                System.out.println(review.getDateAdded());
                 ReviewResponse response = new ReviewResponse(
                         review.getFullName(),
                         review.getRole(),
@@ -119,6 +124,12 @@ public class ReviewService {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie not found");
         }
+    }
+
+    private static String calculateTimeAgoByTimeGranularity(Date pastTime, TimeGranularity timeGranularity) {
+        Date date = new Date();
+        long timeDifferenceInMillis = date.getTime() - pastTime.getTime();
+        return timeDifferenceInMillis / timeGranularity.toMillis() + " " + timeGranularity.name().toLowerCase() + " ago";
     }
 
 }
