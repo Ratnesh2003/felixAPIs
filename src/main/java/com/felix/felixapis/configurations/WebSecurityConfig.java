@@ -58,6 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/change-profile/save-new-email/**").permitAll()
                 .antMatchers("/api/home/get-movie-cover/**").permitAll()
                 .antMatchers("/stream-movie/**").permitAll()
+                .antMatchers("/.well-known/assetlinks.json").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
