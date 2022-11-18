@@ -7,9 +7,9 @@ public class ReviewResponse {
     private String role;
     private String reviewText;
     private int rating;
-    private Date dateAdded;
+    private String dateAdded;
 
-    public ReviewResponse(String nameOfUser, String role, String reviewText, int rating, Date dateAdded) {
+    public ReviewResponse(String nameOfUser, String role, String reviewText, int rating, String dateAdded) {
         this.nameOfUser = nameOfUser;
         this.role = role;
         this.reviewText = reviewText;
@@ -49,11 +49,11 @@ public class ReviewResponse {
         this.rating = rating;
     }
 
-    public Date getDateAdded() {
+    public String getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(Date dateAdded) {
+    public void setDateAdded(String dateAdded) {
         this.dateAdded = dateAdded;
     }
 }

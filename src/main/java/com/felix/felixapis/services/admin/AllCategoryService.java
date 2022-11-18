@@ -27,7 +27,7 @@ public class AllCategoryService {
             } else {
                 AllCategory newAllCategory = new AllCategory(allCategoryName);
                 allCategoryRepository.save(newAllCategory);
-                return ResponseEntity.status(HttpStatus.OK).body("Category added successfully");
+                return ResponseEntity.status(HttpStatus.CREATED).body("Category added successfully");
             }
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to perform this action");

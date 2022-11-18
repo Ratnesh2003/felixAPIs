@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -87,7 +88,7 @@ public class MovieController {
 
             Movie newMovie = movieService.getJson(moviesRequest, fileName, videoFileName);
             moviesRepository.save(newMovie);
-            return ResponseEntity.status(HttpStatus.OK).body("Movie uploaded successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Movie uploaded successfully");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
         }
@@ -98,6 +99,7 @@ public class MovieController {
     public ResponseEntity<List<MoviesWithCategoryResponse>> getHomeMovies(@RequestParam String category, HttpServletRequest request) {
 
         List<Movie> moviesByCategory = moviesRepository.findAllMoviesWhereCategory(category.toLowerCase());
+        Collections.shuffle(moviesByCategory);
 
         return imageIDFromMovie.getImageAndIdFromMovieModel(moviesByCategory, request);
     }

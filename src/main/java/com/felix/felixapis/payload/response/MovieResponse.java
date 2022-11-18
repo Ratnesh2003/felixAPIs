@@ -33,10 +33,12 @@ public class MovieResponse {
 
     private int totalReviews;
 
+    private Boolean reviewed;
+
     public MovieResponse() {
     }
 
-    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath, Boolean addedToWishlist, Boolean liked, String rating, int totalReviews) {
+    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath, Boolean addedToWishlist, Boolean liked, String rating, int totalReviews, Boolean reviewed) {
         this.id = id;
         this.movieName = movieName;
         this.movieDescription = movieDescription;
@@ -51,6 +53,7 @@ public class MovieResponse {
         this.liked = liked;
         this.rating = rating;
         this.totalReviews = totalReviews;
+        this.reviewed = reviewed;
     }
     public MovieResponse(String movieName, String movieDescription, int movieYear, List<Genre> genres) {
         this.movieName = movieName;
@@ -169,5 +172,13 @@ public class MovieResponse {
 
     public void setTotalReviews(int totalReviews) {
         this.totalReviews = totalReviews;
+    }
+
+    public Boolean getReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(Boolean reviewed) {
+        this.reviewed = reviewed;
     }
 }

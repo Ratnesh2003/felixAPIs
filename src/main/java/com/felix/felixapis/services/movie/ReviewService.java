@@ -1,5 +1,6 @@
 package com.felix.felixapis.services.movie;
 
+import com.felix.felixapis.TimeGranularity;
 import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.auth.User;
 import com.felix.felixapis.models.movie.Reviews;
@@ -39,6 +40,8 @@ public class ReviewService {
         this.moviesRepository = moviesRepository;
     }
 
+
+
     public ResponseEntity<?> addFeedback(ReviewRequest reviewRequest, HttpServletRequest httpRequest) {
         long userId = getDetailsFromUser.getUserId(httpRequest);
 
@@ -75,13 +78,38 @@ public class ReviewService {
 
             List<ReviewResponse> reviewResponses = new ArrayList<>();
 
+
             for (Reviews review : reviews) {
+                long differenceInSeconds = (new Date().getTime() - review.getDateAdded().getTime()) / 1000;
+//                Date differenceInTime = new Date(differenceInSeconds);
+                TimeGranularity timeFormat = TimeGranularity.SECONDS;
+
+                if (differenceInSeconds >= 60 && differenceInSeconds < 3600 ) {
+                    timeFormat = TimeGranularity.MINUTES;
+                }
+                if (differenceInSeconds >= 3600 && differenceInSeconds < 86400 ) {
+                    timeFormat = TimeGranularity.HOURS;
+                }
+                if (differenceInSeconds >= 86400 && differenceInSeconds < 2678400 ) {
+                    timeFormat = TimeGranularity.DAYS;
+                }
+                if (differenceInSeconds >= 2678400 && differenceInSeconds < 31536000 ) {
+                    timeFormat = TimeGranularity.MONTHS;
+                }
+                if (differenceInSeconds >= 31536000) {
+                    timeFormat = TimeGranularity.YEARS;
+                }
+
+                String timeAgo = calculateTimeAgoByTimeGranularity(review.getDateAdded(), timeFormat);
+                if (timeAgo.startsWith("1 ")) {
+                    timeAgo = timeAgo.replace("s ago", " ago");
+                }
                 ReviewResponse response = new ReviewResponse(
                         review.getFullName(),
                         review.getRole(),
                         review.getReviewText(),
                         review.getRating(),
-                        review.getDateAdded()
+                        timeAgo
                 );
                 reviewResponses.add(response);
             }
@@ -119,6 +147,12 @@ public class ReviewService {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie not found");
         }
+    }
+
+    private static String calculateTimeAgoByTimeGranularity(Date pastTime, TimeGranularity timeGranularity) {
+        Date date = new Date();
+        long timeDifferenceInMillis = date.getTime() - pastTime.getTime();
+        return timeDifferenceInMillis / timeGranularity.toMillis() + " " + timeGranularity.name().toLowerCase() + " ago";
     }
 
 }
