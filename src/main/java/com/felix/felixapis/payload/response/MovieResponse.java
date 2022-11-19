@@ -1,5 +1,6 @@
 package com.felix.felixapis.payload.response;
 
+import com.felix.felixapis.models.movie.Category;
 import com.felix.felixapis.models.movie.Genre;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class MovieResponse {
 
     private List<Genre> genres;
 
+    private List<Category> categories;
+
     private String coverImageServingPath;
 
     private String streamMoviePath;
@@ -38,7 +41,7 @@ public class MovieResponse {
     public MovieResponse() {
     }
 
-    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath, Boolean addedToWishlist, Boolean liked, String rating, int totalReviews, Boolean reviewed) {
+    public MovieResponse(Long id, String movieName, String movieDescription, String movieCast, int movieYear, String movieRestriction, String movieLength, List<Genre> genres, String coverImageServingPath, String streamMoviePath, Boolean addedToWishlist, Boolean liked, String rating, int totalReviews, Boolean reviewed, List<Category> categories) {
         this.id = id;
         this.movieName = movieName;
         this.movieDescription = movieDescription;
@@ -54,6 +57,7 @@ public class MovieResponse {
         this.rating = rating;
         this.totalReviews = totalReviews;
         this.reviewed = reviewed;
+        this.categories = categories;
     }
     public MovieResponse(String movieName, String movieDescription, int movieYear, List<Genre> genres) {
         this.movieName = movieName;
@@ -180,5 +184,13 @@ public class MovieResponse {
 
     public void setReviewed(Boolean reviewed) {
         this.reviewed = reviewed;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 }

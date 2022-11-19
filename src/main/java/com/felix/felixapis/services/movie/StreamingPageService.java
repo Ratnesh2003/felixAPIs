@@ -47,7 +47,7 @@ public class StreamingPageService {
 
     public ResponseEntity<MovieResponse> getStreamingPageDetails(Movie movieDetails, HttpServletRequest httpRequest) {
         String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
-        String coverImageURL = baseURL + "/api/home/get-movie-cover/" + movieDetails.getCoverImagePath();
+        String coverImageURL = baseURL + "/stream-movie/" + movieDetails.getCoverImagePath();
         movieDetails.setCoverImageServingPath(coverImageURL);
         String movieURL = baseURL + "/stream-movie/" + movieDetails.getStreamMovieName();
         movieDetails.setStreamMoviePath(movieURL);
@@ -97,8 +97,9 @@ public class StreamingPageService {
                 liked,
                 String.format("%.1f", movieRating),
                 totalReviews,
-                reviewed
-        ));
+                reviewed,
+                movieDetails.getCategories()
+                ));
 
     }
 
