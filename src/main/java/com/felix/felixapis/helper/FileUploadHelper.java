@@ -11,7 +11,8 @@ import java.nio.file.Paths;
 @Component
 public class FileUploadHelper {
 //    @Value("${project.image}")// local
-    @Value(("/app/target/classes/static/"))
+//    @Value(("/app/target/classes/static/"))
+    @Value("/home/ec2-user/static/")
     private String UPLOAD_DIR;
 
 

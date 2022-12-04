@@ -10,11 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class GetDetailsFromUser {
 
-    @Autowired
+    final
     JwtUtil jwtUtil;
 
-    @Autowired
+    final
     UserRepository userRepository;
+
+    public GetDetailsFromUser(JwtUtil jwtUtil, UserRepository userRepository) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+    }
 
     public long getUserId(HttpServletRequest httpRequest) {
         String requestTokenHeader = httpRequest.getHeader("Authorization");

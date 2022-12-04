@@ -4,6 +4,7 @@ import com.felix.felixapis.helper.GetDetailsFromUser;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.repository.auth.UserRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
+import com.felix.felixapis.services.impl.NewAdminServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,20 +29,20 @@ public class DeleteMovieService {
     GetDetailsFromUser getDetailsFromUser;
 
     final
-    NewAdminService newAdminService;
+    NewAdminServiceImpl newAdminServiceImpl;
 
     final
     MoviesRepository moviesRepository;
 
-    public DeleteMovieService(UserRepository userRepository, GetDetailsFromUser getDetailsFromUser, NewAdminService newAdminService, MoviesRepository moviesRepository) {
+    public DeleteMovieService(UserRepository userRepository, GetDetailsFromUser getDetailsFromUser, NewAdminServiceImpl newAdminServiceImpl, MoviesRepository moviesRepository) {
         this.userRepository = userRepository;
         this.getDetailsFromUser = getDetailsFromUser;
-        this.newAdminService = newAdminService;
+        this.newAdminServiceImpl = newAdminServiceImpl;
         this.moviesRepository = moviesRepository;
     }
 
     public ResponseEntity<?> deleteMovie(long movieId, HttpServletRequest httpRequest) throws IOException {
-        if (newAdminService.checkAdmin(httpRequest)) {
+        if (newAdminServiceImpl.checkAdmin(httpRequest)) {
             Movie movieToBeDeleted = moviesRepository.findMovieById(movieId);
             movieToBeDeleted.getCategories().clear();
             movieToBeDeleted.getGenres().clear();

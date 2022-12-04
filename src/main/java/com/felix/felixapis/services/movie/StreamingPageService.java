@@ -1,8 +1,6 @@
 package com.felix.felixapis.services.movie;
 
 import com.felix.felixapis.helper.GetDetailsFromUser;
-import com.felix.felixapis.models.movie.Genre;
-import com.felix.felixapis.models.movie.LikedMovies;
 import com.felix.felixapis.models.movie.Movie;
 import com.felix.felixapis.models.movie.Reviews;
 import com.felix.felixapis.payload.response.MovieResponse;
@@ -11,7 +9,7 @@ import com.felix.felixapis.repository.movie.LikedRepository;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.repository.movie.ReviewRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.felix.felixapis.services.impl.ReviewServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,26 +21,36 @@ import java.util.List;
 @Service
 public class StreamingPageService {
 
-    @Autowired
+    final
     JwtUtil jwtUtil;
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     MoviesRepository moviesRepository;
 
-    @Autowired
+    final
     GetDetailsFromUser getDetailsFromUser;
 
-    @Autowired
+    final
     LikedRepository likedRepository;
 
-    @Autowired
+    final
     ReviewRepository reviewRepository;
 
-    @Autowired
-    ReviewService reviewService;
+    final
+    ReviewServiceImpl reviewServiceImpl;
+
+    public StreamingPageService(JwtUtil jwtUtil, UserRepository userRepository, MoviesRepository moviesRepository, GetDetailsFromUser getDetailsFromUser, LikedRepository likedRepository, ReviewRepository reviewRepository, ReviewServiceImpl reviewServiceImpl) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.moviesRepository = moviesRepository;
+        this.getDetailsFromUser = getDetailsFromUser;
+        this.likedRepository = likedRepository;
+        this.reviewRepository = reviewRepository;
+        this.reviewServiceImpl = reviewServiceImpl;
+    }
 
 
     public ResponseEntity<MovieResponse> getStreamingPageDetails(Movie movieDetails, HttpServletRequest httpRequest) {
@@ -72,7 +80,7 @@ public class StreamingPageService {
             liked = true;
         }
 
-        if (reviewService.checkFeedbackExistence(movieDetails.getId(), httpRequest)) {
+        if (reviewServiceImpl.checkFeedbackExistence(movieDetails.getId(), httpRequest)) {
             reviewed = true;
         }
 

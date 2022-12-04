@@ -16,11 +16,17 @@ import java.util.List;
 
 @Service
 public class EditMovieService {
-  @Autowired
+  final
   MoviesRepository moviesRepository;
-  @Autowired
+  final
   GenreRepository genreRepository;
-   public MovieResponse getMovieDetails(long movieId){
+
+  public EditMovieService(MoviesRepository moviesRepository, GenreRepository genreRepository) {
+    this.moviesRepository = moviesRepository;
+    this.genreRepository = genreRepository;
+  }
+
+  public MovieResponse getMovieDetails(long movieId){
      Movie movieDetails = moviesRepository.findMovieById(movieId);
      return new MovieResponse(movieDetails.getMovieName(),movieDetails.getMovieDescription(),
              movieDetails.getMovieYear(),

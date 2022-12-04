@@ -5,12 +5,11 @@ import com.felix.felixapis.payload.request.movie.WishlistRequest;
 import com.felix.felixapis.payload.response.MoviesWithCategoryResponse;
 import com.felix.felixapis.repository.movie.MoviesRepository;
 import com.felix.felixapis.security.jwt.JwtUtil;
-import com.felix.felixapis.services.movie.HistoryService;
+import com.felix.felixapis.services.impl.HistoryServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -21,33 +20,33 @@ public class WatchHistoryController {
     JwtUtil jwtUtil;
     final
     ImageIDFromMovie imageIDFromMovie;
-    final HistoryService historyService;
+    final HistoryServiceImpl historyServiceImpl;
 
-    public WatchHistoryController(MoviesRepository moviesRepository, JwtUtil jwtUtil, ImageIDFromMovie imageIDFromMovie, HistoryService historyService) {
+    public WatchHistoryController(MoviesRepository moviesRepository, JwtUtil jwtUtil, ImageIDFromMovie imageIDFromMovie, HistoryServiceImpl historyServiceImpl) {
         this.moviesRepository = moviesRepository;
         this.jwtUtil = jwtUtil;
         this.imageIDFromMovie = imageIDFromMovie;
-        this.historyService = historyService;
+        this.historyServiceImpl = historyServiceImpl;
     }
 
     @PostMapping("/api/history/add")
     public ResponseEntity<?> addToWatchedHistory(@RequestBody WishlistRequest watchedHistoryRequest, HttpServletRequest httpRequest) {
-        return historyService.addToWatchHistory(watchedHistoryRequest.getMovieId(), httpRequest);
+        return historyServiceImpl.addToWatchHistory(watchedHistoryRequest.getMovieId(), httpRequest);
     }
 
 
     @GetMapping("/api/history/get")
     public ResponseEntity<List<MoviesWithCategoryResponse>> getWatchedHistory(HttpServletRequest httpRequest) {
-        return historyService.getWatchHistory(httpRequest);
+        return historyServiceImpl.getWatchHistory(httpRequest);
     }
     @DeleteMapping("/api/history/clear")
     public ResponseEntity<?> deleteWatchedMovies(HttpServletRequest httpRequest) {
-       return historyService.clearWatchHistory(httpRequest);
+       return historyServiceImpl.clearWatchHistory(httpRequest);
     }
 
     @DeleteMapping("/api/history/delete")
     public ResponseEntity<?> deleteWatchedMovie(@RequestParam long movieId,HttpServletRequest httpRequest) {
-        return historyService.deleteMovieFromHistory(movieId, httpRequest);
+        return historyServiceImpl.deleteMovieFromHistory(movieId, httpRequest);
     }
 
 }

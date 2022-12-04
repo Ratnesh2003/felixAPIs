@@ -2,7 +2,7 @@ package com.felix.felixapis.controllers.movie;
 
 import com.felix.felixapis.payload.request.movie.ReviewRequest;
 import com.felix.felixapis.payload.response.ReviewResponse;
-import com.felix.felixapis.services.movie.ReviewService;
+import com.felix.felixapis.services.impl.ReviewServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,25 +13,25 @@ import java.util.List;
 public class ReviewController {
 
     final
-    ReviewService reviewService;
+    ReviewServiceImpl reviewServiceImpl;
 
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
+    public ReviewController(ReviewServiceImpl reviewServiceImpl) {
+        this.reviewServiceImpl = reviewServiceImpl;
     }
 
     @PostMapping("/api/movie/add-feedback")
     public ResponseEntity<?> addReview(@RequestBody ReviewRequest reviewRequest, HttpServletRequest httpRequest) {
-        return reviewService.addFeedback(reviewRequest, httpRequest);
+        return reviewServiceImpl.addFeedback(reviewRequest, httpRequest);
     }
 
     @GetMapping("/api/movie/get-feedbacks")
     public ResponseEntity<List<ReviewResponse>> getReviews(@RequestParam long movieId, HttpServletRequest httpRequest) {
-        return reviewService.getFeedback(movieId, httpRequest);
+        return reviewServiceImpl.getFeedback(movieId, httpRequest);
     }
 
     @DeleteMapping("/api/movie/delete-feedback")
     public ResponseEntity<?> deleteReview(@RequestParam long movieId,  HttpServletRequest httpRequest) {
-        return reviewService.deleteFeedback(movieId, httpRequest);
+        return reviewServiceImpl.deleteFeedback(movieId, httpRequest);
     }
 
 }

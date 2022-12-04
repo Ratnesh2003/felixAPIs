@@ -18,20 +18,28 @@ import java.util.Objects;
 @Service
 public class ResetPasswordService {
 
-    @Autowired
+    final
     GetDetailsFromUser getDetailsFromUser;
 
-    @Autowired
+    final
     UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
+    final
     AuthenticationManager authenticationManager;
 
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     PasswordEncoder passwordEncoder;
+
+    public ResetPasswordService(GetDetailsFromUser getDetailsFromUser, UserDetailsServiceImpl userDetailsService, AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.getDetailsFromUser = getDetailsFromUser;
+        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public ResponseEntity<?> resetPassword(String email, String oldPass, String newPass) {
         if (userRepository.existsByEmailIgnoreCase(email)) {

@@ -33,7 +33,8 @@ public class MovieController {
     @Autowired
     EditMovieService editMovieService;
 //    @Value("${project.image}") //original
-    @Value(("/app/target/classes/static"))
+//    @Value(("/app/target/classes/static"))
+    @Value("/home/ec2-user/static/")
     private String UPLOAD_DIR;
     private final MoviesRepository moviesRepository;
 
@@ -135,5 +136,10 @@ public class MovieController {
 //        return editMovieService.editMovieService(editMovieRequest.getNewMovieName(), editMovieRequest.getNewMovieDescription(),
 //                editMovieRequest.getNewGenre(),editMovieRequest.getNewMovieYear());
         return editMovieService.editMovie(editMovieRequest);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<?> homePage() {
+        return ResponseEntity.status(HttpStatus.OK).body("This is homepage");
     }
 }

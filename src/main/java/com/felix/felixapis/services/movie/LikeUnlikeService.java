@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class LikeUnlikeService {
 
-    @Autowired
+    final
     MoviesRepository moviesRepository;
+
+    public LikeUnlikeService(MoviesRepository moviesRepository) {
+        this.moviesRepository = moviesRepository;
+    }
 
     public Boolean increaseLike(Movie likedMovie) {
         int currentLikes = likedMovie.getLikesCount();
