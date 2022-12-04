@@ -18,14 +18,14 @@ public class EmailConfirmationModel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-//    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-//    @JoinColumn(nullable = false, name = "user_id")
-    private Long userId;
+    @OneToOne
+    @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
+    private User userId;
 
     public EmailConfirmationModel() {
     }
 
-    public EmailConfirmationModel(long userId) {
+    public EmailConfirmationModel(User userId) {
         this.userId = userId;
         creationDate = new Date();
         confirmationToken = UUID.randomUUID().toString();
@@ -55,11 +55,11 @@ public class EmailConfirmationModel {
         this.creationDate = creationDate;
     }
 
-    public long getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 }

@@ -67,7 +67,7 @@ public class ProfileServicesImpl implements ProfileService {
         String requestTokenHeader = httpRequest.getHeader("Authorization");
         String oldEmail = jwtUtil.getEmailFromToken(requestTokenHeader.substring(7));
         User userDetails = userRepository.findUserByEmailIgnoreCase(oldEmail);
-        EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(userDetails.getId());
+        EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(userRepository.findUserById(userDetails.getId()));
         confirmationTokenRepository.save(emailConfirmationModel);
         String baseURL = ServletUriComponentsBuilder.fromRequestUri(httpRequest).replacePath(null).build().toUriString();
 
@@ -85,7 +85,7 @@ public class ProfileServicesImpl implements ProfileService {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("The link is invalid");
         }
         else{
-            User userDetails = userRepository.findUserById(token.getUserId());
+            User userDetails = userRepository.findUserById(token.getUserId().getId());
             userDetails.setEmail(newEmail);
             userRepository.save(userDetails);
             return ResponseEntity.status(HttpStatus.OK).body("Email Updated");

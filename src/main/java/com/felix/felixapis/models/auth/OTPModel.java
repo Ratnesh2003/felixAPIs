@@ -16,14 +16,14 @@ public class OTPModel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-//    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-//    @JoinColumn(nullable = false, name = "user_id")
-    private Long userId;
+    @OneToOne
+    @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
+    private User userId;
 
     public OTPModel() {
     }
 
-    public OTPModel(long userId, int otp) {
+    public OTPModel(User userId, int otp) {
         this.userId = userId;
         creationDate = new Date(System.currentTimeMillis());
         this.otp = otp;
@@ -53,11 +53,11 @@ public class OTPModel {
         this.creationDate = creationDate;
     }
 
-    public long getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 }

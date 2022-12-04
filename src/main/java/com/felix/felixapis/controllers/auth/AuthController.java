@@ -102,7 +102,7 @@ public class AuthController {
         );
         userRepository.save(user);
 
-        EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(user.getId());
+        EmailConfirmationModel emailConfirmationModel = new EmailConfirmationModel(userRepository.findUserById(user.getId()));
         confirmationTokenRepository.save(emailConfirmationModel);
 
         emailServices.sendMessageWithAttachment("innitt090@gmail.com",
@@ -126,7 +126,7 @@ public class AuthController {
         if(userRepository.existsByEmailIgnoreCase(loginRequest.getEmail())) {
             User user = userRepository.findUserByEmailIgnoreCase(loginRequest.getEmail());
             EmailConfirmationModel emailConfirmationModel = confirmationTokenRepository.findEmailConfirmationModelByUserId(user.getId());
-            EmailConfirmationModel newEmailConfirmModel = new EmailConfirmationModel(user.getId());
+            EmailConfirmationModel newEmailConfirmModel = new EmailConfirmationModel(userRepository.findUserById(user.getId()));
             newEmailConfirmModel.setTokenId(emailConfirmationModel.getTokenId());
             confirmationTokenRepository.save(newEmailConfirmModel);
 
@@ -158,7 +158,7 @@ public class AuthController {
         if(new Date().getTime() > token.getCreationDate().getTime() + 5*60*1000) {
             return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Verification link expired");
         } else {
-            User user = userRepository.findUserById(token.getUserId());
+            User user = userRepository.findUserById(token.getUserId().getId());
             user.setEnabled(true);
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.OK).body("Account verified");
@@ -193,7 +193,7 @@ public class AuthController {
             OTPModel otpModel = otpRepository.findOTPModelByUserId(user.getId());
             int otp = random.nextInt(899999) + 100000;
             if(otpModel == null) {
-                OTPModel otpModelNew = new OTPModel(user.getId(), otp);
+                OTPModel otpModelNew = new OTPModel(userRepository.findUserById(user.getId()), otp);
                 otpRepository.save(otpModelNew);
 
             } else {

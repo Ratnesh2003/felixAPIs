@@ -3,6 +3,9 @@ package com.felix.felixapis.models.auth;
 import com.felix.felixapis.models.movie.WatchedHistory;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -14,21 +17,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @NotNull
-//    @Size(max = 50)
-//    @Email
+    @NotNull
+    @Size(max = 50)
+    @Email
     private String email;
-//
-//    @NotNull
-//    @Size(max = 30)
+
+    @NotNull
+    @Size(max = 30)
     private String firstName;
 
-//    @NotNull
-//    @Size(max = 30)
+    @NotNull
+    @Size(max = 30)
     private String lastName;
 
-//    @NotNull
-//    @Size(max = 100)
+    @NotNull
+    @Size(max = 100)
     private String password;
 
     private String role = "USER";
